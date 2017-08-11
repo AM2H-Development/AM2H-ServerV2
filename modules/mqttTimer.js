@@ -31,8 +31,8 @@ class M {
         if (!cfg.latitude) cfg.latitude=49.080864;
         if (!cfg.longitude) cfg.longitude=9.070314;
         this.cfg=cfg;
-        mqttClient= mqtt.connect('mqtt://' + cfg.host);
-        this.root=cfg.database;        
+        mqttClient= mqtt.connect('mqtt://' + cfg.mqttServer);
+        this.root=cfg.mqttRootTopic;        
     }
     start(){
         this.sunTimes = SunCalc.getTimes(new Date(),this.cfg.latitude, this.cfg.longitude);

@@ -3,5 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+'use strict';
 
+var cfg = require('./cfg/config');
 
+const timer = require('./modules/mqttTimer');
+timer.setProperties(cfg);
+timer.start();
