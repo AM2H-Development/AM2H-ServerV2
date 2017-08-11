@@ -3,7 +3,9 @@
  */
 
 var config = {
-    host          : "192.168.178.XXX",
+    mqttServer    : "192.168.178.XXX",
+    mqttRootTopic : "mh",
+    mysqlServer   : "192.168.178.XXX",
     mysqlUser     : 'pi',
     mysqlPassword : 'XXX',
     database      : 'XXX',
