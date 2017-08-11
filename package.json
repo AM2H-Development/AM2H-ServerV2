@@ -1,6 +1,10 @@
 {
   "name": "AM2H-ServerV2",
+<<<<<<< HEAD
   "version": "1.0.0",
+=======
+  "version": "2.0.0",
+>>>>>>> 2fe52a6f92f5eb0323b7bbb31c9f25e50d804f42
   "keywords": [
     "util",
     "functional",
@@ -8,7 +12,7 @@
     "client",
     "browser"
   ],
-  "description": "AM2H Server on Raspberry",
+  "description": "AM2H Server V2",
   "license": "MIT",
   "author": "mh",
   "repository": "n/a",
