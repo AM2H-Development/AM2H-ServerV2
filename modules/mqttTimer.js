@@ -9,7 +9,7 @@ var moment = require('moment');
 var SunCalc = require('suncalc');
 
 class M {
-    constructor(){
+    constructor() {
         this.cfg; // properties/config object storage
         this.sunTimes; // suncalc object storage 
         this.timeout; // handler for serInterval
@@ -23,87 +23,101 @@ class M {
         this.oldYear;
         this.oldWeekday;
         this.oldFullYear;
-        this.oldDawn=true; // Dawn = Morgendämmerung
-        this.oldDusk=true; // Dusk = Abenddämmerung
+        this.oldDawn = true; // Dawn = Morgendämmerung
+        this.oldDusk = true; // Dusk = Abenddämmerung
     }
-    
-    setProperties(cfg){
-        if (!cfg.latitude) cfg.latitude=49.080864;
-        if (!cfg.longitude) cfg.longitude=9.070314;
-        this.cfg=cfg;
-        mqttClient= mqtt.connect('mqtt://' + cfg.mqttServer);
-        this.root=cfg.mqttRootTopic;        
+
+    setProperties(cfg) {
+        if (!cfg.latitude)
+            cfg.latitude = 49.080864;
+        if (!cfg.longitude)
+            cfg.longitude = 9.070314;
+        this.cfg = cfg;
+        mqttClient = mqtt.connect('mqtt://' + cfg.mqttServer);
+        this.root = cfg.mqttRootTopic;
+        mqttClient.on('connect', () => {
+            mqttClient.subscribe(cfg.mqttRootTopic + '/#');
+            console.log("MQTT connected");
+        });
     }
-    start(){
-        this.sunTimes = SunCalc.getTimes(new Date(),this.cfg.latitude, this.cfg.longitude);
-        var date= new Date();
-        if (this.sunTimes.dawn < date){ this.oldDawn=false; }
-        if (this.sunTimes.dusk < date){ this.oldDusk=false; }
-        
+    start() {
+        this.sunTimes = SunCalc.getTimes(new Date(), this.cfg.latitude, this.cfg.longitude);
+        var date = new Date();
+        if (this.sunTimes.dawn < date) {
+            this.oldDawn = false;
+        }
+        if (this.sunTimes.dusk < date) {
+            this.oldDusk = false;
+        }
+
         // console.log(moment(this.sunTimes.sunset).format());
         console.log(this.sunTimes);
         console.log(this.sunTimes.dawn);
         console.log(this.sunTimes.dusk);
         console.log(new Date());
-        
-        this.oldSeconds=moment().seconds();
-        this.oldMinutes=moment().minutes();
-        this.oldHours=moment().hours();
-        this.oldDay=moment().isoWeekday();
-        this.oldDate=moment().date();
-        this.oldMonth=moment().month();
-        this.oldFullYear=moment().year();
-        this.timeout = setInterval(this.poll,100,this);
+
+        this.oldSeconds = moment().seconds();
+        this.oldMinutes = moment().minutes();
+        this.oldHours = moment().hours();
+        this.oldDay = moment().isoWeekday();
+        this.oldDate = moment().date();
+        this.oldMonth = moment().month();
+        this.oldFullYear = moment().year();
+        this.timeout = setInterval(this.poll, 100, this);
     }
-    stop(){
+    stop() {
         clearInterval(this.timeout);
     }
-    poll(obj){
-        if (mqttClient !== undefined){
+    poll(obj) {
+        if (mqttClient !== undefined) {
             if (moment().seconds() !== obj.oldSeconds) {
-                mqttClient.publish(obj.root + "/event/timer/seconds",moment().format());
-                obj.oldSeconds=moment().seconds();
-            } else return;
+                var topic = obj.root + "/event/timer/seconds";
+                var message = moment().format();
+                mqttClient.publish(topic,message);
+                console.log(topic+ " # "+message);
+                obj.oldSeconds = moment().seconds();
+            } else
+                return;
             if (moment().minutes() !== obj.oldMinutes) {
-                mqttClient.publish(obj.root + "/event/timer/minutes",moment().minutes().toString());
-                obj.oldMinutes=moment().minutes();
+                mqttClient.publish(obj.root + "/event/timer/minutes", moment().minutes().toString());
+                obj.oldMinutes = moment().minutes();
 
                 var date = new Date();
-                if ((obj.sunTimes.dawn < date) && obj.oldDawn){
-                    mqttClient.publish(obj.root + "/event/timer/dawn",moment().format());
-                    obj.oldDawn=false;
+                if ((obj.sunTimes.dawn < date) && obj.oldDawn) {
+                    mqttClient.publish(obj.root + "/event/timer/dawn", moment().format());
+                    obj.oldDawn = false;
                 }
-                if ((obj.sunTimes.dusk < date) && obj.oldDusk){
-                    mqttClient.publish(obj.root + "/event/timer/dusk",moment().format());
-                    obj.oldDusk=false;
+                if ((obj.sunTimes.dusk < date) && obj.oldDusk) {
+                    mqttClient.publish(obj.root + "/event/timer/dusk", moment().format());
+                    obj.oldDusk = false;
                 }
             }
             if (moment().hours() !== obj.oldHours) {
-                mqttClient.publish(obj.root + "/event/timer/hours",moment().hours().toString());
-                obj.oldHours=moment().hours();
+                mqttClient.publish(obj.root + "/event/timer/hours", moment().hours().toString());
+                obj.oldHours = moment().hours();
             }
             if (moment().isoWeekday() !== obj.oldDay) {
-                mqttClient.publish(obj.root + "/event/timer/day",moment().isoWeekday().toString());
-                obj.oldDay=moment().isoWeekday();
-                obj.sunTimes = SunCalc.getTimes(new Date(),obj.cfg.latitude, obj.cfg.longitude);
-                obj.oldDawn=true;
-                obj.oldDusk=true;
+                mqttClient.publish(obj.root + "/event/timer/day", moment().isoWeekday().toString());
+                obj.oldDay = moment().isoWeekday();
+                obj.sunTimes = SunCalc.getTimes(new Date(), obj.cfg.latitude, obj.cfg.longitude);
+                obj.oldDawn = true;
+                obj.oldDusk = true;
             }
             if (moment().date() !== obj.oldDate) {
-                mqttClient.publish(obj.root + "/event/timer/date",moment().date().toString());
-                obj.oldDate=moment().date();
+                mqttClient.publish(obj.root + "/event/timer/date", moment().date().toString());
+                obj.oldDate = moment().date();
             }
             if (moment().month() !== obj.oldMonth) {
-                mqttClient.publish(obj.root + "/event/timer/month",moment().month().toString());
-                obj.oldMonth=moment().month();
+                mqttClient.publish(obj.root + "/event/timer/month", moment().month().toString());
+                obj.oldMonth = moment().month();
             }
             if (moment().year() !== obj.oldFullYear) {
-                mqttClient.publish(obj.root + "/event/timer/year",moment().year().toString());
-                obj.oldFullYear=moment().year();
+                mqttClient.publish(obj.root + "/event/timer/year", moment().year().toString());
+                obj.oldFullYear = moment().year();
             }
 
         }
     }
 }
 
-module.exports=new M();
+module.exports = new M();

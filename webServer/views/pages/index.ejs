@@ -1,0 +1,26 @@
+<!-- views/pages/index.ejs -->
+<!DOCTYPE html>
+<html>
+<head>
+    <% include ../partials/head %>
+</head>
+<body>
+    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+
+    <header class="mdl-layout__header">
+        <% include ../partials/header %>
+    </header>
+
+    <% include ../partials/menu %>
+
+      <!-- Content -->
+      <main class="mdl-layout__content" style="overflow:auto;">
+ 
+        <!-- Datenfelder -->
+        <div id="contentlayer" class="page-content"> </div>
+
+        <% include ../partials/detailcard %>
+      </main>
+    </div>
+  </body>
+</html>
