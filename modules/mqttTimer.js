@@ -34,11 +34,12 @@ class M {
             cfg.longitude = 9.070314;
         this.cfg = cfg;
         mqttClient = mqtt.connect('mqtt://' + cfg.mqttServer);
-        this.root = cfg.mqttRootTopic;
+        console.log(mqttClient.options.host);
         mqttClient.on('connect', () => {
             mqttClient.subscribe(cfg.mqttRootTopic + '/#');
             console.log("MQTT connected");
         });
+        this.root = cfg.mqttRootTopic;
     }
     start() {
         this.sunTimes = SunCalc.getTimes(new Date(), this.cfg.latitude, this.cfg.longitude);
@@ -73,8 +74,8 @@ class M {
             if (moment().seconds() !== obj.oldSeconds) {
                 var topic = obj.root + "/event/timer/seconds";
                 var message = moment().format();
-                mqttClient.publish(topic,message);
-                console.log(topic+ " # "+message);
+                mqttClient.publish(topic, message);
+                console.log(topic + " # " + message);
                 obj.oldSeconds = moment().seconds();
             } else
                 return;
