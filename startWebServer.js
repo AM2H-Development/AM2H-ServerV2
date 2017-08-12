@@ -47,6 +47,7 @@ const mqttClient  = mqtt.connect('mqtt://' + cfg.mqttServer);
 
 mqttClient.on('connect', () => {
     mqttClient.subscribe(cfg.mqttRootTopic + '/#');
+    mqttClient.subscribe('db/req/#');
     mqttLog.info("MQTT connected");
 });
 
@@ -56,9 +57,11 @@ mqttClient.on('error', (error) => {
 
 mqttClient.on('message', (topic, message, pg) => {
     mqttLog.debug("Received from MQTT: " + topic.toString() + " value: " + message.toString());
-    var post  = {message: message.toString(), topic: topic.toString()};
-    // t.trigger(topic,message);
-    io.emit(topic,post);
+    if (topic.substring(0,3)!=='db'){
+        var post  = {message: message.toString(), topic: topic.toString()};
+        // t.trigger(topic,message);
+        io.emit(topic,post);
+    }
 });
 
 // Socket Server
@@ -66,6 +69,7 @@ io.on('connection', (socket) => {
     socketsLog.info('Client connected');
     socket.on('poll', (data) => {
         socketsLog.debug('Client ask for ' + data.toString() + ' on ' + socket.id);
+        mqttClient.publish('db/poll',data.toString());
         /*var query = t.query(data);
         query.on('result', (result) => {
             socketsLog.debug("Send to client " + data.toString() + " value: " + result.message);
