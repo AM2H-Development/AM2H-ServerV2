@@ -27,17 +27,22 @@ class M {
         this.oldDusk = true; // Dusk = Abenddämmerung
     }
 
-    setProperties(cfg) {
+    setProperties(cfg,callback) {
         if (!cfg.latitude)
             cfg.latitude = 49.080864;
         if (!cfg.longitude)
             cfg.longitude = 9.070314;
         this.cfg = cfg;
-        mqttClient = mqtt.connect('mqtt://' + cfg.mqttServer);
-        console.log(mqttClient.options.host);
+        mqttClient = mqtt.connect(cfg.mqttServer);
+        console.log("Try to connect to " + mqttClient.options.host);
         mqttClient.on('connect', () => {
             mqttClient.subscribe(cfg.mqttRootTopic + '/#');
             console.log("MQTT connected");
+            callback();
+        });
+        mqttClient.on('error', (err) => {
+            console.log("MQTT error: "+err.toString());
+            callback();
         });
         this.root = cfg.mqttRootTopic;
     }

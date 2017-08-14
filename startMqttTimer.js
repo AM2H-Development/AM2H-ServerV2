@@ -7,6 +7,5 @@
 
 var cfg = require('./cfg/config');
 
-const timer = require('./modules/mqttTimer');
-timer.setProperties(cfg);
-timer.start();
+const mqttTimer = require('./modules/');
+mqttTimer.setProperties(cfg,()=>{mqttTimer.start();});

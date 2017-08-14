@@ -43,16 +43,16 @@ app.get('/', (req, res) => {
 
 // MQTT Client
 const mqtt = require('mqtt');
-const mqttClient  = mqtt.connect('mqtt://' + cfg.mqttServer);
+const mqttClient  = mqtt.connect(cfg.mqttServer);
 
 mqttClient.on('connect', () => {
     mqttClient.subscribe(cfg.mqttRootTopic + '/#');
-    mqttClient.subscribe('db/req/#');
+    mqttClient.subscribe('db/res/#');
     mqttLog.info("MQTT connected");
 });
 
 mqttClient.on('error', (error) => {
-    mqttLog.info("MQTT Error"+error);
+    mqttLog.info("MQTT Error: "+error);
 });
 
 mqttClient.on('message', (topic, message, pg) => {
@@ -62,6 +62,13 @@ mqttClient.on('message', (topic, message, pg) => {
         // t.trigger(topic,message);
         io.emit(topic,post);
     }
+    if (topic.substring(0,3)==='db'){
+        var m = {message:"123", topic:"/mh/test"};
+        var post  = {message: m.message.toString(), topic: m.topic.toString()};
+        // t.trigger(topic,message);
+        io.emit("db/res",post);
+    }
+    
 });
 
 // Socket Server
