@@ -26,8 +26,8 @@ var insertDocuments = function(db) {
   // Get the documents collection
   var collection = db.collection('mh');
   // Insert some documents
-  for (var j=0;j<300000;j++){
-    collection.insertMany([{"topic":"mh/l/h1/state/t01","message":i++},{"topic":"mh/l/h1/state/t02","message":i++},{"topic":"mh/l/b1/state/t01","message":i++}]).then(); 
+  for (var j=0;j<30000;j++){
+    collection.insertMany([{"topic":"mh/l/h1/state/t01","message":i++},{"topic":"mh/l/h1/state/t02","message":i++},{"topic":"mh/l/b1/state/t01","message":i++},{"topic":"mh/l/h1/state/t01","message":i++},{"topic":"mh/l/h1/state/t02","message":i++},{"topic":"mh/l/b1/state/t01","message":i++},{"topic":"mh/l/h1/state/t01","message":i++},{"topic":"mh/l/h1/state/t02","message":i++},{"topic":"mh/l/b1/state/t01","message":i++}]).then(); 
   }
-}
+};
 

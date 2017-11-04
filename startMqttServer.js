@@ -9,8 +9,8 @@ var ascoltatore = {
 };
 
 var settings = {
-    port: 1883,
-    backend: ascoltatore
+    port: 1883 //,
+    //backend: ascoltatore
 };
 
 var mqttServer = new mosca.Server(settings);
