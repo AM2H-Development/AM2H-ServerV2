@@ -1,5 +1,5 @@
 /* 
- * Connoctor to DB
+ * Connector to DB
  */
 
 class DB {
@@ -24,37 +24,41 @@ class DB {
         mysqlClient.connect();
         this.mysqlClient=mysqlClient;
         
-        mysqlClient.query('CREATE DATABASE IF NOT EXISTS ' + this.cfg.database +';', (error) => {
-            if (error) this.dbLog.error("Error: connect ETIMEDOUT at CREATE DATABASE");
-        }); 
-
-        mysqlClient.query("CREATE TABLE IF NOT EXISTS " + this.cfg.database + "." + this.cfg.database +" ("
-                            + " id BIGINT AUTO_INCREMENT PRIMARY KEY,"
-                            + " topic VARCHAR(255), message VARCHAR(255),"
-                            + " ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"
-                            + ");", (error) => {
-            if (error) this.dbLog.error("Error: connect ETIMEDOUT at CREATE TABLE");
+        mysqlClient.query('CREATE DATABASE IF NOT EXISTS ' + this.cfg.database +' CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;',
+            (error) => {
+                if (error) this.dbLog.error("Error: connect ETIMEDOUT at CREATE DATABASE");
         }); 
 
         return this;
     }
     writeTopic(topic,message){
-        //console.log("Received from MQTT: " + topic.toString() + " value: " + message.toString());
-        var post  = {message: message.toString(), topic: topic.toString()};
-        this.mysqlClient.query('INSERT INTO '+ this.cfg.database +'.' + this.cfg.database + ' SET ?', post, (error) =>{
-            if (error) this.dbLog.error("Error writing to DB");
+        var ts = Date.now();
+        // console.log("Write: " + topic.toString() + " value: " + message.toString() + " ts: " + ts);
+        var post  = {ts: ts.toString(), message: message.toString()};
+        var _topic = this._trans(topic);
+
+        this.mysqlClient.query('INSERT INTO '+ this.cfg.database +'.' + _topic + ' SET ?', post, (error) =>{
+            if (error) this.dbLog.error(error.toString());
         });   
     }
     readTopic(topic, callback){
+        var _topic = this._trans(topic);
+        // console.log(_topic);
+        
+        this.mysqlClient.query("CREATE TABLE IF NOT EXISTS " + this.cfg.database + "." + _topic +" ( `ts` BIGINT(20) NOT NULL , `message` VARCHAR(255) NOT NULL , PRIMARY KEY (`ts`));",
+            (error) => {
+                if (error) this.dbLog.error("Error: connect ETIMEDOUT at CREATE TABLE");
+            });
+        
         this.mysqlClient.query(
-            'SELECT message FROM '+ this.cfg.database +'.' + this.cfg.database + ' WHERE topic = ? ORDER BY id DESC LIMIT 1',
+            'SELECT ts,message FROM '+ this.cfg.database +'.' + _topic + ' ORDER BY ts DESC LIMIT 1',
             topic.toString(),
             function (error, results, fields) {
                 // console.log(error);
                 // console.log(results);
                 // console.log(fields);
                 if (!error && (results.length>0)){
-                    var res = {"topic": topic, "message": results[0].message};
+                    var res = {"topic": topic, "message": results[0].message, "ts": results[0].ts};
                     callback(res);
                 }                        
             });
@@ -68,6 +72,10 @@ class DB {
         });
         
         return query;
+    }
+    
+    _trans(topic){
+        return topic.toString().toLowerCase().replace(/\//g ,"__");
     }
 }
 var db = new DB();

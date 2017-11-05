@@ -9,9 +9,6 @@
 // Load Main Configuration
 var cfg = require('./cfg/config');
 
-// Load Topics Container
-var topics = require('./cfg/'+cfg.mqttRootTopic+'/topics');
-
 // Load loggers for debug messages
 require('./modules/logger');
 var mainLog = require('winston').loggers.get('main');
@@ -42,16 +39,9 @@ app.get('/', (req, res) => {
     if ((page === undefined) || (menu[page] === undefined)) page='default';
     res.render('pages/index',{active:page, menu:menu, diagram:diagram });
 });
+
 // DB connection and topic cache
-
-var db = require('./modules/dbConnector');
-db.connect();
-
-Object.entries(topics).forEach(function(element) {
-    db.readTopic(element[0], (res) => {
-        topics[res.topic].message=res.message;
-    });
-});
+var topic = require('./modules/topicHandler');
 
 // MQTT Client
 const mqtt = require('mqtt');
@@ -85,6 +75,9 @@ mqttClient.on('message', (topic, message, pg) => {
 // Socket Server
 io.on('connection', (socket) => {
     socketsLog.info('Client connected');
+    topic.updateTopic('mh/l/h1/state/t03',4711);
+    topic.updateTopic('mh/l/h1/state/t01',1121);
+    
     socket.on('poll', (data) => {
         socketsLog.debug('Client ask for ' + data.toString() + ' on ' + socket.id);
         mqttClient.publish('db/poll',data.toString());
