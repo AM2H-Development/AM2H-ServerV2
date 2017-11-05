@@ -1,5 +1,7 @@
 const DEBUGLEVEL='debug';
 const PRODUCTION='info';
+var cfg = require('../cfg/config');
+
 var winston = require('winston');
 winston.setLevels(winston.config.syslog.levels);
 // { emerg: 0, alert: 1, crit: 2, error: 3, warning: 4, notice: 5, info: 6, debug: 7 }
@@ -12,7 +14,7 @@ winston.loggers.add('main', {
     },
     file: {
         level:DEBUGLEVEL,
-        filename: './logfiles/main.log'
+        filename: cfg.loggerRoot + '/logfiles/main.log'
     }
   });
 
@@ -24,7 +26,19 @@ winston.loggers.add('http', {
     },
     file: {
         level:DEBUGLEVEL,
-        filename: './logfiles/http.log'
+        filename: cfg.loggerRoot + '/logfiles/http.log'
+    }
+  });
+
+winston.loggers.add('db', {
+    console: {
+        level: DEBUGLEVEL,
+        colorize: true,
+        label: 'db'
+    },
+    file: {
+        level:DEBUGLEVEL,
+        filename: cfg.loggerRoot + '/logfiles/db.log'
     }
   });
 
@@ -36,7 +50,7 @@ winston.loggers.add('sockets', {
     },
     file: {
         level:DEBUGLEVEL,
-        filename: './logfiles/sockets.log'
+        filename: cfg.loggerRoot + '/logfiles/sockets.log'
     }
   });
 
@@ -48,7 +62,7 @@ winston.loggers.add('mqtt', {
     },
     file: {
         level:PRODUCTION,
-        filename: './logfiles/mqtt.log'
+        filename: cfg.loggerRoot + '/logfiles/mqtt.log'
     }
   });
 
@@ -60,7 +74,7 @@ winston.loggers.add('timer', {
     },
     file: {
         level:DEBUGLEVEL,
-        filename: './logfiles/timer.log'
+        filename: cfg.loggerRoot + '/logfiles/timer.log'
     }
   });
 
@@ -72,6 +86,6 @@ winston.loggers.add('topicsLogger', {
     },
     file: {
         level:DEBUGLEVEL,
-        filename: './logfiles/tlog.log'
+        filename: cfg.loggerRoot + '/logfiles/tlog.log'
     }
   });

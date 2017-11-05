@@ -4,18 +4,24 @@
 
 var config = {
     // MQTT config
-    mqttServer    : "192.168.178.XXX",
+    mqttServer    : "mqtt://server-mh.fritz.box:1883",
     mqttRootTopic : "mh",
 
     // WebServerConfig
     serverDocRoot : "mh",
     
-    mysqlServer   : "192.168.178.XXX",
-    mysqlUser     : 'pi',
-    mysqlPassword : 'XXX',
-    database      : 'XXX',
+    // Database Server config
+    dbServer   : "mqtt://server-mh.fritz.box",
+    dbUser     : 'pi',
+    dbPassword : 'XXX',
+    database   : 'mh',
+    
+    // Geographic config
     longitude     : 9.070314,
-    latitude      : 49.080864
+    latitude      : 49.080864,
+    
+    // Logger config
+    loggerRoot : "."
 };
 module.exports = config;
 

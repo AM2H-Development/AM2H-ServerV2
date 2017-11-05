@@ -1,7 +1,5 @@
 /* 
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * List all topics and define logging
  */
 
 /*
@@ -17,29 +15,26 @@
  * seconds	s
  */
 
-const t = require('../../topicsLogger');
-t.addLogger({   topic:"mh/l/h1/state/t01",  // Topic to log
-                condition:"every", // Condition: all, every (s), atLeast (s), atMost(s), onEvent (trigger)
-                interval:5, // for every, atLeast, atMost
-                newonly:false // optional: log only new values
-            }).addCleanup({ unit:"seconds",
-                            lifespan:30
-                        });
+var topics = {
+    "mh/l/h2/state/t04":{},
+    "mh/l/h1/state/t01":{
+        message:"123", // (optional) default message
+        triggers:["mh/l/h1/state/t02","mh/l/h1/state/t03"], // (optional) additional triggers for message update
+        calc: function(_a){return _a["mh/l/h1/state/t01"].message-_a["mh/l/h1/state/t02"].message;}, // (optional) calc function
+        emitToMqtt: true, // (optional) emit calculated messages to MQTT bus (from triggers only)
+        logger:{ // (optional) default is onEvent
+            condition:"every", // Condition: all, every (s), atLeast (s), atMost(s), onEvent (MQTT trigger)
+            interval:5, // for every, atLeast, atMost
+            newonly:true // optional: log only new values            
+        },
+        cleanup:{ // default is no cleanup
+            unit:"seconds",
+            lifespan:30
+        }
+    },
+    "mh/l/h1/state/t02":{
+        message:"456"  
+    }
+};
 
-t.addLogger({   topic:"mh/l/h1/state/t02",  // Topic to log
-                condition:"atLeast", // Condition: all, every (s), atLeast (s), atMost(s), onEvent (trigger)
-                interval:5, // for every, atLeast, atMost
-                newonly:false // optional: log only new values
-            }).addCleanup({ unit:"seconds",
-                            lifespan:30
-                        });
-
-t.addLogger({   topic:"mh/l/m01/state/c01",  // Topic to log
-                condition:"onEvent", // Condition: all, every (s), atLeast (s), atMost(s), onEvent (trigger)
-                trigger:"mh/event/timer/",
-                newonly:false // optional: log only new values
-            }).addCleanup({ unit:"seconds",
-                            lifespan:30
-                        });
-
-
+module.exports=topics;

@@ -1,7 +1,6 @@
 /* 
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * WebServer V2
+ * communication with MQTT / MySQL / WebSockets
  */
 /* global __dirname */
 
@@ -9,6 +8,9 @@
 
 // Load Main Configuration
 var cfg = require('./cfg/config');
+
+// Load Topics Container
+var topics = require('./cfg/'+cfg.mqttRootTopic+'/topics');
 
 // Load loggers for debug messages
 require('./modules/logger');
@@ -40,6 +42,16 @@ app.get('/', (req, res) => {
     if ((page === undefined) || (menu[page] === undefined)) page='default';
     res.render('pages/index',{active:page, menu:menu, diagram:diagram });
 });
+// DB connection and topic cache
+
+var db = require('./modules/dbConnector');
+db.connect();
+
+Object.entries(topics).forEach(function(element) {
+    db.readTopic(element[0], (res) => {
+        topics[res.topic].message=res.message;
+    });
+});
 
 // MQTT Client
 const mqtt = require('mqtt');
@@ -47,7 +59,6 @@ const mqttClient  = mqtt.connect(cfg.mqttServer);
 
 mqttClient.on('connect', () => {
     mqttClient.subscribe(cfg.mqttRootTopic + '/#');
-    mqttClient.subscribe('db/res/#');
     mqttLog.info("MQTT connected");
 });
 
