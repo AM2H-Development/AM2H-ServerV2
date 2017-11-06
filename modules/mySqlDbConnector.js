@@ -1,6 +1,7 @@
 /* 
  * Connector to DB
  */
+var moment = require('moment');
 
 class DB {
     constructor(){
@@ -31,15 +32,24 @@ class DB {
 
         return this;
     }
-    writeTopic(topic,message){
-        var ts = Date.now();
-        // console.log("Write: " + topic.toString() + " value: " + message.toString() + " ts: " + ts);
-        var post  = {ts: ts.toString(), message: message.toString()};
-        var _topic = this._trans(topic);
+    writeTopic(topicObject){
+        // console.log("Write: " + topicObject.topic + " value: " + topicObject.message + " ts: " + topicObject.ts);
+        var post  = {ts: topicObject.ts, message: topicObject.message};
+        var _topic = this._trans(topicObject.topic);
 
         this.mysqlClient.query('INSERT INTO '+ this.cfg.database +'.' + _topic + ' SET ?', post, (error) =>{
             if (error) this.dbLog.error(error.toString());
-        });   
+        });
+
+        if (topicObject.cleanup){
+            // console.log("cleanup");
+            var timestamp = moment().subtract(topicObject.cleanup.lifespan, topicObject.cleanup.unit).valueOf();
+            this.dbLog.info(moment().format("YYYY-MM-DD HH:mm:ss.S") + " cleaning " + topicObject.topic+ " to " + timestamp);
+
+            this.mysqlClient.query('DELETE FROM '+ this.cfg.database +'.' + _topic + ' WHERE ts < ?', [timestamp], (error) =>{
+                if (error) this.dbLog.error(error.toString());
+            });
+        }
     }
     readTopic(topic, callback){
         var _topic = this._trans(topic);

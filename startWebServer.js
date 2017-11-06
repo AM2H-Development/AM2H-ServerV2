@@ -22,7 +22,6 @@ var diagram = require('./webServer/cfg/'+cfg.serverDocRoot+'/diagram');
 
 // Express Webserver and Socket.io
 const express = require('express');
-const socketIO = require('socket.io');
 const path = require('path');
 const PORT = process.env.PORT || 3000;
 const app = express();
@@ -31,7 +30,6 @@ app.use(express.static(path.join(__dirname, 'webServer/pub')));
 app.use(express.static(path.join(__dirname,'webServer/pub/' + cfg.serverDocRoot)));
 app.set('view engine', 'ejs');
 const server = app.listen(PORT, () => httpLog.info(`Listening on ${ PORT }`));
-const io = socketIO(server);
 
 app.get('/', (req, res) => {
     httpLog.info("REQ:" + req.query.view);
@@ -41,60 +39,41 @@ app.get('/', (req, res) => {
 });
 
 // DB connection and topic cache
-var topic = require('./modules/topicHandler');
+const topicHandler = require('./modules/topicHandler');
 
 // MQTT Client
 const mqtt = require('mqtt');
 const mqttClient  = mqtt.connect(cfg.mqttServer);
+topicHandler.setMqttClient(mqttClient);
 
 mqttClient.on('connect', () => {
     mqttClient.subscribe(cfg.mqttRootTopic + '/#');
     mqttLog.info("MQTT connected");
 });
-
 mqttClient.on('error', (error) => {
     mqttLog.info("MQTT Error: "+error);
 });
-
 mqttClient.on('message', (topic, message, pg) => {
     mqttLog.debug("Received from MQTT: " + topic.toString() + " value: " + message.toString());
-    if (topic.substring(0,3)!=='db'){
-        var post  = {message: message.toString(), topic: topic.toString()};
-        // t.trigger(topic,message);
-        io.emit(topic,post);
-    }
-    if (topic.substring(0,3)==='db'){
-        var m = {message:"123", topic:"/mh/test"};
-        var post  = {message: m.message.toString(), topic: m.topic.toString()};
-        // t.trigger(topic,message);
-        io.emit("db/res",post);
-    }
-    
+    topicHandler.updateMessage(topic,message);    
 });
 
 // Socket Server
+const socketIO = require('socket.io');
+const io = socketIO(server);
+topicHandler.setSocketsClient(io);
+
 io.on('connection', (socket) => {
     socketsLog.info('Client connected');
-    topic.updateTopic('mh/l/h1/state/t03',4711);
-    topic.updateTopic('mh/l/h1/state/t01',1121);
     
     socket.on('poll', (data) => {
         socketsLog.debug('Client ask for ' + data.toString() + ' on ' + socket.id);
-        mqttClient.publish('db/poll',data.toString());
-        /*var query = t.query(data);
-        query.on('result', (result) => {
-            socketsLog.debug("Send to client " + data.toString() + " value: " + result.message);
-            socket.emit(data.toString(),{topic:data.toString(),message:result.message});
-        });*/
+        socketsLog.debug("Send to client " + data.toString() + " value: " + topicHandler.getMessage(data.toString()));
+        socket.emit(data.toString(),{topic:data.toString(),message:topicHandler.getMessage(data.toString())});
     });
     socket.on('chart', (data) => {
         socketsLog.debug('CHART: Client ask for ' + data.topics.toString() + ' with ' + data.interval.toString() + ' on ' + socket.id);
-        /* var query = t.queryChart(data);
-        query.on('result', (result) => {
-            socketsLog.debug("Send to client " + data.toString() + " value: " + result.message);
-            socket.emit('chartdata',{data:"123"});
-        });*/
-
+        
     });
     socket.on('set', (data) => {
         mqttClient.publish(data.topic,data.message);
@@ -102,4 +81,3 @@ io.on('connection', (socket) => {
     });    
     socket.on('disconnect', () => socketsLog.info('Client disconnected'));
 });
-

@@ -15,13 +15,11 @@
  * seconds	s
  */
 
-// CREATE TABLE `mh`.`mh__l__h2__state__t04` ( `ts` TIMESTAMP on update CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , `message` VARCHAR(255) NOT NULL , PRIMARY KEY (`ts`)) ENGINE = InnoDB;
-
 var topics = {
     "mh/l/h2/state/t04":{
         message:0,
         triggers:["mh/l/h1/state/t02","mh/l/h1/state/t03"],
-        calc: (_t) => {return _t["mh/l/h1/state/t02"].message - _t["mh/l/h1/state/t03"].message;},
+        calc: (_t) => {return _t.getMessage("mh/l/h1/state/t02") - _t.getMessage("mh/l/h1/state/t03");},
         logger:{
             newonly:true
         }
@@ -29,12 +27,11 @@ var topics = {
     "mh/l/h1/state/t01":{
         message:"123", // (optional) default message
         triggers:["mh/l/h1/state/t02","mh/l/h1/state/t04"], // (optional) additional triggers for message update
-        calc: (_t) => {return _t["mh/l/h1/state/t04"].message - _t["mh/l/h1/state/t02"].message;}, // (optional) calc function
-        emitToMqtt: true, // (optional) emit calculated messages to MQTT bus (from triggers only)
+        calc: (_t) => {return _t.getMessage("mh/l/h2/state/t04") - _t.getMessage("mh/l/h1/state/t02");}, // (optional) calc function
         logger:{ // (optional) default is onEvent
-            condition:"every", // Condition: all, every (s), atLeast (s), atMost(s), onEvent (MQTT trigger)
-            interval:5, // for every, atLeast, atMost
-            newonly:true // optional: log only new values            
+            condition:"atMost", // Condition: all (default), atMost
+            interval:5, // for atMost (in seconds)
+            newonly:true // optional: log only new values (default = false)           
         },
         cleanup:{ // default is no cleanup
             unit:"seconds",
@@ -43,6 +40,9 @@ var topics = {
     },
     "mh/l/h1/state/t02":{
         message:"456"  
+    },
+    "mh/location/raum1/state/switch":{
+        
     },
     "mh/l/h1/state/t03":{
         message:"1024"
