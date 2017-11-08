@@ -16,6 +16,8 @@
   "dependencies": {
     "ejs": "2.5.7",
     "express": "4.16.2",
+    "math.js": "1.1.40",
+    "mathjs": "^3.16.5",
     "moment": "2.19.1",
     "mongodb": "2.2.33",
     "mosca": "2.7.0",

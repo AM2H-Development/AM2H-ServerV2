@@ -2,6 +2,9 @@
  * Topic Handler and Connection to DB
  */
 
+// Libraries
+var math = require('mathjs');
+
 // Load config
 var cfg = require('../cfg/config');
 
@@ -17,12 +20,16 @@ class TH {
         require('./logger');
         this.dbLog = require('winston').loggers.get('db');
         this.tidx={}; // index of triggers
+
         this.mqttClient;
         this.socketsClient;
         
         Object.entries(topics).forEach((element) => {
-            topics[element[0]].topic=element[0];
+            topics[element[0]].topic=element[0]; // name the topic inside the object
+            if (!topics[element[0]].message){topics[element[0]].message=0;} // check if message variable is available
+            
             db.readTopic(element[0], (res) => {
+                // console.log("restore " + res.topic + " with " + res.message);
                 topics[res.topic].message=res.message;
                 topics[res.topic].ts=res.ts;
             });
@@ -69,30 +76,54 @@ class TH {
         this.socketsClient.emit(topic,post);
 
         if (!topics[topic]) return; // Return if topic is not defined
+
+        if (topics[topic].formatter){
+            console.log(math.eval(topics[topic].formatter,{v:parseFloat(message)}));
+        }
         
         topics[topic].oldMessage=topics[topic].message; // update message
         topics[topic].oldTs=topics[topic].ts; // update message
         topics[topic].message=message;
         topics[topic].ts=Date.now();
         
-        
         if (this.tidx[topic]){ // touch triggers
             this.tidx[topic].forEach((element) => {
                 if (topics[element].calc){
-                    console.log("Touch " + element); 
-                    topics[element].message = topics[element].calc(this);
-                    this.mqttClient.publish(element.toString(),topics[element].message.toString());
-                    // this.updateMessage(element,topics[element].message);
-                }
+                    // console.log("Touch " + element); 
+                    var vCount=0; // mathjs variable counter
+                    var vMidx={}; // index of mathjs variables / messages
+                    const regex = /\{\{([^\}]*)\}\}/g;
+                    const str = topics[element].calc;
+                    var ev = str;
+                    let m;
+                    while ((m = regex.exec(str)) !== null) {
+                        if (m.index === regex.lastIndex) {
+                            regex.lastIndex++;
+                        }
+                        if (!topics[m[1]]){ // if topic is not defined set message to 0
+                            vMidx["nd"]=0;
+                            ev = ev.replace(m[0].toString(),"nd");
+                        } else {
+                            vMidx["v"+vCount]=topics[m[1]].message.toString();
+                            ev = ev.replace(m[0].toString(),"v"+vCount++);
+                        }
+                    }
+                }                                    
+                // console.log(vMidx);
+                topics[element].message = math.eval(ev,vMidx);
+                // console.log(ev + " = " + topics[element].message);
+                this.mqttClient.publish(element.toString(),topics[element].message.toString());
             });
         }
-        
         if (topics[topic].logger && topics[topic].logger.condition){
             this["log_"+topics[topic].logger.condition](topics[topic]);
         } else this.log_all(topics[topic]);
     }
 
     // Loggers
+    log_none(topic){
+    }
+    
     log_all(topic){
         // console.log("log_all");
         if (!topic.logger.newonly || (topic.message !== topic.oldMessage)){

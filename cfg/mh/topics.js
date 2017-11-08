@@ -19,17 +19,18 @@ var topics = {
     "mh/l/h2/state/t04":{
         message:0,
         triggers:["mh/l/h1/state/t02","mh/l/h1/state/t03"],
-        calc: (_t) => {return _t.getMessage("mh/l/h1/state/t02") - _t.getMessage("mh/l/h1/state/t03");},
+        calc: "{{mh/l/h1/state/t02}} - {{mh/l/h1/state/t03}}",
         logger:{
             newonly:true
         }
     },
     "mh/l/h1/state/t01":{
         message:"123", // (optional) default message
+        // formatter:'format(v/10,{notation: "fixed", precision: 2})',
         triggers:["mh/l/h1/state/t02","mh/l/h1/state/t04"], // (optional) additional triggers for message update
-        calc: (_t) => {return _t.getMessage("mh/l/h2/state/t04") - _t.getMessage("mh/l/h1/state/t02");}, // (optional) calc function
+        calc: "{{mh/l/h1/state/t04}} - {{mh/l/h1/state/t02}}", // (optional) calc function
         logger:{ // (optional) default is onEvent
-            condition:"atMost", // Condition: all (default), atMost
+            condition:"atMost", // Condition: all (default), atMost, none
             interval:5, // for atMost (in seconds)
             newonly:true // optional: log only new values (default = false)           
         },
