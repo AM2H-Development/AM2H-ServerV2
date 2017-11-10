@@ -68,12 +68,10 @@ io.on('connection', (socket) => {
     
     socket.on('poll', (data) => {
         socketsLog.debug('Client ask for ' + data.toString() + ' on ' + socket.id);
-        socketsLog.debug("Send to client " + data.toString() + " value: " + topicHandler.getMessage(data.toString()));
-        socket.emit(data.toString(),{topic:data.toString(),message:topicHandler.getMessage(data.toString())});
+        socketsLog.debug("Send to client " + data.toString() + " value: " + topicHandler.respondClient(data.toString()).message);
     });
     socket.on('chart', (data) => {
-        socketsLog.debug('CHART: Client ask for ' + data.topics.toString() + ' with ' + data.interval.toString() + ' on ' + socket.id);
-        
+        socketsLog.debug('CHART: Client ask for ' + data.topics.toString() + ' with ' + data.interval.toString() + ' on ' + socket.id);        
     });
     socket.on('set', (data) => {
         mqttClient.publish(data.topic,data.message);

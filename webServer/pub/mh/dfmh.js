@@ -1,7 +1,36 @@
 /* 
  * AM2H V.2.0.0 (c)2017 
  */
-/* global c, v, socket, bgImage, re, fo, cp */
+/* global c, v, socket, bgImage, re, fo, cp, math */
+
+// math test
+var parser = new math.parser();
+console.log(parser.eval("a=3"));
+console.log(parser.eval("a"));
+
+function div(cls,style,val,onClick=""){
+    var ret = '<div class="'+cls+'" style="'+style+'"';
+    if (onClick !== "") ret+='onclick="'+onClick+'"';
+    ret+='>' + val + '</div>';
+    return ret;
+}
+
+function img(cls,style,icons,onClick=""){
+    
+}
+
+function input(style,val){
+    
+}
+
+var df =[
+    div("df clickable","width:80px; left:10px; top:175px;",'[@{{mh/location/raum1/state/temperature:formattedMessage}}@]'),
+    '<div class="df clickable" style="width:80px; left:10px; top:300px;" onclick="openChart(this)">fo2 0</div>',
+    '<div class="df_img clickable" style="width:120px; left:10px; top:420px;"><img src="/icons/Light_bulb_(yellow)_icon.svg" onclick="c.send({topic:\'mh/location/raum1/state/switch\', message:\'0\'});"></div>',
+    '<div class="df_inp" style="width:120px; left:10px; top:325px;"><input type="text" style="width: 61px;" name="df6" value="34,5"><button type="button" onclick="c.send({topic:\'mh/location/raum1/state/temperature\', message:($(\'#df6in\').val().replace(\',\', \'.\')*10)});">set</button></div>'
+];
+
+console.log(df);
 
 function initFields(){
     c.setContext("#contentlayer");

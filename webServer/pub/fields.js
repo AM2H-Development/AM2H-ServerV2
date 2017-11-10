@@ -2,7 +2,7 @@
 Felddefinition
 V2.0.3 vom 14.04.2017
 */
-/* global Function, ds */
+/* global ds, Function */
 
 var socket = io();
 
@@ -18,15 +18,20 @@ const _o = new Map();
 
 class V{
     asI(v){
-        return parseInt(_v.get(v),10);
+        if(_v.get(v)) return parseInt(_v.get(v),10);
+        return 0;
     }
     asF(v,defV=0){
-        var val = _v.get(v);
-        if (val===null) val=defV;
-        return parseFloat(val.toString().replace(",", "."),10);
+        if(_v.get(v)){
+            var val = _v.get(v);
+            if (val===null) val=defV;
+            return parseFloat(val.toString().replace(",", "."),10);
+        }
+        return 0.0;
     }
     asS(v){
-        return _v.get(v).toString();
+        if(_v.get(v)) return _v.get(v).toString();
+        return "";
     }
 }
 const v = new V();

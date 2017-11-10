@@ -63,27 +63,46 @@ class TH {
     
     getMessage(topic){
         if (topics[topic]) return topics[topic].message;
-        return undefined;
+        return "";
     }
 
     getTs(topic){
         if (topics[topic]) return topics[topic].ts;
-        return undefined;
+        return 0;
     }
     
-    updateMessage(topic,message){
-        var post  = {message: message.toString(), topic: topic.toString()};
+    respondClient(topic){
+        var me = this.getMessage(topic);
+        var post  = {message: me.toString(), formattedMessage: me.toString(), topic: topic.toString(), ts: Date.now().toString()};
+
+        if (topics[topic]){
+            post.ts=this.getTs(topic);
+            if (topics[topic].formatter){ // Server-side-formatting
+                post.formattedMessage = math.eval(topics[topic].formatter,{v:parseFloat(me)}).toString();
+                post.formattedMessage = post.formattedMessage.replace('.', ','); // replace dot by comma
+                console.log("Formatted message: " + post.formattedMessage);
+            }
+        }
+        this.socketsClient.emit(topic.toString(),post);
+        return post;
+    }
+
+    updateMessage(topic,me){
+        var post  = {message: me.toString(), formattedMessage: me.toString(), topic: topic.toString(), ts: Date.now().toString()};
+
+        if (topics[topic] && topics[topic].formatter){ // Server-side-formatting
+            post.formattedMessage = math.eval(topics[topic].formatter,{v:parseFloat(me)}).toString();
+            post.formattedMessage = post.formattedMessage.replace('.', ','); // replace dot by comma
+            // console.log("Formatted message: " + post.formattedMessage);
+        }
+
         this.socketsClient.emit(topic,post);
 
-        if (!topics[topic]) return; // Return if topic is not defined
-
-        if (topics[topic].formatter){
-            console.log(math.eval(topics[topic].formatter,{v:parseFloat(message)}));
-        }
+        if (!topics[topic]) return; // Return if topic is not defined so no triggers and no logging
         
         topics[topic].oldMessage=topics[topic].message; // update message
-        topics[topic].oldTs=topics[topic].ts; // update message
-        topics[topic].message=message;
+        topics[topic].oldTs=topics[topic].ts; // update timestamp
+        topics[topic].message=me;
         topics[topic].ts=Date.now();
         
         if (this.tidx[topic]){ // touch triggers

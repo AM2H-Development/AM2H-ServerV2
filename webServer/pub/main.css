@@ -15,7 +15,7 @@ html>body {
 #linechart_material{
   padding: 16px;
   background-color: white;
-  width: 632;
+  width: 632px;
   height: 250px;
 }
 
@@ -54,6 +54,12 @@ html>body {
   text-shadow: 0px 0px 2px smokewhite;
   font-weight: 500;
   line-height: normal;
+}
+.img{
+    position:absolute;
+}
+.inp{
+    position:absolute;
 }
 .owf {
 	border: 1px solid #A3A3A3;
