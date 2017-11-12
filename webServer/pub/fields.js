@@ -2,176 +2,155 @@
 Felddefinition
 V2.0.3 vom 14.04.2017
 */
-/* global ds, Function */
-
+/* global ds, Function, math */
 var socket = io();
 
 $(document).ready(function () {
     initFields();
 });
 
-var re={},cp={},fo={};
-
-const _l = new Map();
-const _v = new Map();
-const _o = new Map();
-
-class V{
-    asI(v){
-        if(_v.get(v)) return parseInt(_v.get(v),10);
-        return 0;
-    }
-    asF(v,defV=0){
-        if(_v.get(v)){
-            var val = _v.get(v);
-            if (val===null) val=defV;
-            return parseFloat(val.toString().replace(",", "."),10);
-        }
-        return 0.0;
-    }
-    asS(v){
-        if(_v.get(v)) return _v.get(v).toString();
-        return "";
-    }
-}
-const v = new V();
-
-class DF {
-    constructor(args,style,renderer,compute,formatter,prescale=10,fraction=1,unit="",icons,label){
-        this.id=null;
-        this.status=0; // 0=not initialized, 1=initialized and valid, 2=initialized need redraw
-        this.style=style;
-        this.args=args;
-        this.value=null;
-        this.prescale=prescale;
-        this.fraction=fraction;
-        this.unit=unit;
-        this.icons=icons;
-        this.label=label;
-        if (renderer instanceof Function){
-            this.renderer=renderer;
-        } else {
-            this.renderer=function(id,val,style){return "<div class=\"df\" id=\""+id+"\" style=\""+style+"\">"+val+"</div>";};
-        }
-        if (compute instanceof Function){
-            this.compute=compute;
-        } else {
-            this.compute=function(args){return v.asS(args[0]);};
-        }
-        if (formatter instanceof Function){
-            this.formatter=formatter;
-        } else {
-            this.formatter=function(val,prescale,fraction,unit){
-                val =  (val+" ").replace(",", ".");
-                val /= prescale;
-                return val.toLocaleString(
-                        'de-DE', 
-                        {minimumFractionDigits: fraction, maximumFractionDigits: fraction}
-                        ) + unit;
-            };
-        }
-    }
-    update(context){
-        switch (this.status){
-            case 0:
-                $(context).append(this.renderer(this.id,this.value,this.style));
-                this.status=1;
-                break;
-            case 2:
-                // console.log(this.id + " "+ this.status + " " + this.value);
-                // throw new Error("stop!");
-                $("#"+this.id).replaceWith(this.renderer(this.id,this.formatter(this.value,this.prescale,this.fraction,this.unit),this.style));
-                this.status=1;
-                break;
-        }
+// global Helper functions
+var _h={
+    convertQualifiedTopic: function(topic){
+        return topic.toString().toLowerCase().replace(/[\/\:]/g ,"__");
+    },
+    extractTopic: function(qualifiedTopic){
+        return qualifiedTopic.toString().toLowerCase().replace(/\:.*/g ,"");
     }    
+};
+
+class CssRules {
+    constructor(arr=[]){
+        this.rules=[]; // {cls:cls,rule:"true",mRule:"true"}
+        arr.forEach((e)=>{
+           this.add(e.cls,e.rule); 
+        });
+        return this;
+    }
+    add(cls,rule){
+        const regex = /\{\{([^\}]*)\}\}/g;
+        const str = rule;
+        var mRule = str;
+        let m;
+        while ((m = regex.exec(str)) !== null) {
+            if (m.index === regex.lastIndex) {regex.lastIndex++;}
+            mRule = mRule.replace(m[0].toString(),_h.convertQualifiedTopic(m[1]));
+        }
+        this.rules.push({cls:cls,rule:rule,mRule:mRule});
+        return this;
+    }
+    getTopics(){
+        var arr=[];
+        this.rules.forEach((e)=>{
+            const regex = /\{\{([^\}]*)\}\}/g;
+            const str = e.rule;
+            let m;
+            while ((m = regex.exec(str)) !== null) {
+                if (m.index === regex.lastIndex) {
+                    regex.lastIndex++;
+                }
+                var t = _h.extractTopic(m[1]);
+                // console.log(t);
+                arr[t]=t;
+            }
+        });         
+        return arr;
+    }
+    eval(scope){
+        var cls="";
+        this.rules.forEach((e)=>{
+            if (math.eval(e.mRule,scope)) cls+=e.cls+" ";
+        });
+        return cls;
+    }
 }
 
-class Listener{
-    constructor(id){
-        this.listener= new Set();
-        this.listener.add(id);
-    }
-    addListener(id){
-        this.listener.add(id);
-    }
-}
-
-var renderInProcess=false;
 class Container {
-    constructor(){
-        this.id=0;
-        this.defVal="wait...";
-        this.context = null;
-        this.bgImage="";
-        this.container= new Set();
+    constructor(context=null, bgImage="", progressBar='<div><div style="width:100%;" class="mdl-progress mdl-js-progress mdl-progress__indeterminate"></div></div>'){
+        this.dfContainer={};
+        this.currentId=0;
+        this.context = context;
+        this.bgImage=bgImage;
+        if (context) this.setBgImage(bgImage);
+        this.progressBar =progressBar;
+        this.mathScope={};
+        this.startFlag=false;
+        this.socketListeners={};
+        return this;
     }
     setContext(context){
         this.context=context;
-    }
-    setDefaultValue(defVal){
-        this.defVal=defVal;
+        return this;
     }
     setBgImage(bgImage){
+        if (!this.context) {console.error("Please set context first [setContext(context);]"); return this;}
         this.bgImage=bgImage;
+        $(this.context).css(this.bgImage);
+        return this;
     }
-    addDF(args,style,unit,renderer,compute,formatter,prescale,fraction){
-        var icons; var label;
-        var topics=args;
-        if(arguments.length<2){
-            style = args.style;
-            unit = args.unit;
-            renderer = args.renderer;
-            compute = args.compute;
-            formatter = args.formatter;
-            prescale = args.prescale;
-            fraction = args.fraction;
-            topics = args.topics;
-            icons = args.icons;
-            label = args.label;
-        }
-        var df = new DF(topics,style,renderer,compute,formatter,prescale,fraction,unit,icons,label);
-        df.id="df"+this.id++;
-        df.value=this.defVal;
-        this.container.add(df);
-        _o.set(df.id,df);
-        for (var i = 0, len = topics.length; i < len; i++) {
-            this.addTopic(topics[i],df);
-        }
+    start(){
+        this.startFlag=true;
     }
-    addTopic(topic,df){
-        _v.set(topic,null);
-        if ( _l.get(topic) ){
-            _l.get(topic).addListener(df);
-        } else {
-            _l.set(topic, new Listener(df));
-            socket.on(topic,this.updateValue);
-            socket.emit('poll',topic);
-        }
-        c.render();
-    }
-    updateValue(topicvalue){
-        var topic = topicvalue.topic;
-        var value = topicvalue.message;
-        console.log("Listener "+topic+" : "+value);
-        _v.set(topic,value);
-        for (let df of _l.get(topic).listener){
-            df.value = df.compute(df.args);
-            df.status=2;
-        }
-        c.render();
-    }
-    render(){
-        if (!renderInProcess){
-            renderInProcess=true;
-            $(this.context).css(this.bgImage);
+    box(qualifiedTopic,pos="width: 130px; left:  10px; top: 50px;",cls="",onClick=""){
+        if (!this.context) {console.error("Please set context first [setContext(context);]"); return this;}
+        var id=this.currentId++;
 
-            for (let df of this.container) {
-                // console.log("Render: "+df.id);
-                df.update(this.context);
+        if (cls===""){cls= new CssRules();}
+        if (!(cls instanceof CssRules)) { cls= new CssRules([{cls:cls,rule:"true"}]); }
+        
+        this.dfContainer[id]={id:id,renderer:"_box",qualifiedTopic:qualifiedTopic,pos:pos,cls:cls,onClick:onClick,init:true};         
+        return this._box(id);
+    }
+    _box(id){
+        var dfC=this.dfContainer[id];
+        var value="";
+        var cls="";
+        
+        if (dfC.init) {
+            this._addSocketListener(_h.extractTopic(dfC.qualifiedTopic),id);
+            this._addToMathScope({message:"",formattedMessage:"",topic:_h.extractTopic(dfC.qualifiedTopic),ts:0},this); // Just make sure that is initialzied
+            var cssTopics = dfC.cls.getTopics();
+            //console.log("L for: "+id+" = ");
+            //console.log(cssTopics);
+            //console.log(cssTopics.length);
+            for (var prop in cssTopics) {
+                this._addToMathScope({message:"",formattedMessage:"",topic:cssTopics[prop],ts:0},this); // Just make sure that is initialzied
+                this._addSocketListener(cssTopics[prop],id);
             }
-            renderInProcess=false;
+        } else{
+            cls = dfC.cls.eval(this.mathScope);
+            value=this.mathScope[_h.convertQualifiedTopic(dfC.qualifiedTopic)];
         }
+       
+        var html = '<div id="df' + dfC.id + '" class="df ' + cls + (dfC.init ? "wait":"") + '" style="' + dfC.pos + '" onclick="' + dfC.onClick + '">';
+        var htmlClose = "</div>";
+        
+        if (dfC.init) {
+            $(this.context).append(html + this.progressBar + htmlClose);
+            dfC.init=false;
+        } else {
+            $("#df"+dfC.id).replaceWith(html + value + htmlClose);
+        }
+        return this;
+    }
+    _addSocketListener(topic,id){
+        if (!this.socketListeners[topic+"###"+id]){
+            socket.on(topic,(fullTopic)=>this._socketListenerHandler(fullTopic,id,this));
+            socket.emit('poll',topic);
+            this.socketListeners[topic+"###"+id]={};
+        }
+    }
+    _socketListenerHandler(fullTopic,id,scope){
+        this._addToMathScope(fullTopic, scope);
+        if (this.startFlag) scope[scope.dfContainer[id].renderer](id);
+    }
+    _addToMathScope(fullTopic, scope){
+        var __m  = _h.convertQualifiedTopic(fullTopic.topic+":message");
+        var __fm = _h.convertQualifiedTopic(fullTopic.topic+":formattedMessage");
+        var __ts = _h.convertQualifiedTopic(fullTopic.topic+":ts");
+        scope.mathScope[__m]=fullTopic.message;
+        scope.mathScope[__fm]=fullTopic.formattedMessage;
+        scope.mathScope[__ts]=fullTopic.ts;
     }
     send(topicmessage){
         //console.log(topicmessage);
@@ -180,4 +159,3 @@ class Container {
         socket.emit('set',topicmessage);
     }
 }
-const c = new Container();
