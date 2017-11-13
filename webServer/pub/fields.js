@@ -108,7 +108,7 @@ class Container {
     start(){
         this.startFlag=true;
     }
-    div(element,qualifiedTopic,pos,cls,onClick){
+    initElement(element,qualifiedTopic,pos,cls,onClick){
         if (!this.context) {console.error("Please set context first [setContext(context);]"); return this;}
         var id=this.currentId++;
 
@@ -127,8 +127,54 @@ class Container {
         };         
         return this[element](id);
     }
+    inp(qualifiedTopic,pos="width: 130px; left:  10px; top: 50px;",cls="df",onClick=""){
+        return this.initElement("_inp",qualifiedTopic,pos,cls,onClick);
+    }
+    _inp(id){
+        var dfC=this.dfContainer[id];
+        var value="";
+        var cls="";
+        
+        if (dfC.init) {
+            cls=dfC.cls.initCls+" ";
+            if (dfC.qualifiedTopic !==""){
+                this._addSocketListener(_h.extractTopic(dfC.qualifiedTopic),id);
+                this._addToMathScope({message:"",formattedMessage:"",topic:_h.extractTopic(dfC.qualifiedTopic),ts:0}); // Just make sure that is initialzied
+            }
+            var cssTopics = dfC.cls.getTopics();
+            for (var prop in cssTopics) {
+                this._addToMathScope({message:"",formattedMessage:"",topic:cssTopics[prop],ts:0}); // Just make sure that is initialzied
+                this._addSocketListener(cssTopics[prop],id);
+            }
+        } else{
+            cls = dfC.cls.initCls+" "+dfC.cls.eval(mathScope);
+            if (dfC.qualifiedTopic !=="") value=mathScope[_h.convertQualifiedTopic(dfC.qualifiedTopic)];
+        }
+       
+       // <input type="text" id="uname" name="name"
+       //    placeholder="Lower case, all one word">
+       
+        var html = '<div id="df' + dfC.id + '" class="' + cls + (dfC.init ? "wait":"")+ '"'  + ' style="' + dfC.pos + '" onclick="' + dfC.onClick + '">';
+        html+='<form onSubmit="alert(\'submit\');return false;"><input type="text"'  + ' style="' + dfC.pos + ' padding:0px; border:0px;" id="in' + dfC.id + '" placeholder="';
+        var htmlClose = '"><input type="submit" style="display: none" /></form>';
+        var divClose = '</div>';
+        
+        if (dfC.init) {
+            $(this.context).append(html + htmlClose + ((dfC.qualifiedTopic !=="") ? this.progressBar:"") + divClose);
+            dfC.init=false;
+        } else {
+            $("#df"+dfC.id).replaceWith(html + value + htmlClose + divClose);
+            if (dfC.lastMessage !== value) {
+                var color=$("#df"+dfC.id).css("borderColor");
+                $("#df"+dfC.id).css("borderColor","#ffffff");
+                $("#df"+dfC.id).animate({borderColor: color}, 400 );
+                dfC.lastMessage=value;
+            }
+        }
+        return this;
+    }
     box(qualifiedTopic,pos="width: 130px; left:  10px; top: 50px;",cls="df",onClick=""){
-        return this.div("_box",qualifiedTopic,pos,cls,onClick);
+        return this.initElement("_box",qualifiedTopic,pos,cls,onClick);
     }
     _box(id){
         var dfC=this.dfContainer[id];
@@ -198,7 +244,7 @@ class Container {
 function emit(topic,message){
     var topicmessage={topic:topic, message:message};
     if (!isNaN(topicmessage.message)) topicmessage.message+="";
-    // console.log(topicmessage);
+    //console.log(topicmessage);
     socket.emit('set',topicmessage);
 };
 
