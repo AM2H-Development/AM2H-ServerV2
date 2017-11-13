@@ -13,10 +13,10 @@ $(document).ready(function () {
 // global Helper functions
 var _h={
     convertQualifiedTopic: (topic) => {
-        return topic.toString().toLowerCase().replace(/[\/\:]/g ,"__");
+        return topic.toString().replace(/[\/\:]/g ,"__");
     },
     extractTopic: (qualifiedTopic) => {
-        return qualifiedTopic.toString().toLowerCase().replace(/\:.*/g ,"");
+        return qualifiedTopic.toString().replace(/\:.*/g ,"");
     },
     convertAllQualifiedTopics: (rule)=>{
         const regex = /\{\{([^\}]*)\}\}/g;
@@ -216,6 +216,7 @@ class Container {
     }
     _addSocketListener(topic,id){
         if (!this.socketListeners[topic+"###"+id]){
+            //console.log("Listening on:" + topic);
             socket.on(topic,(fullTopic)=>this._socketListenerHandler(fullTopic,id,this));
             socket.emit('poll',topic);
             this.socketListeners[topic+"###"+id]={};

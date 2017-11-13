@@ -48,7 +48,7 @@ topicHandler.setMqttClient(mqttClient);
 
 mqttClient.on('connect', () => {
     mqttClient.subscribe(cfg.mqttRootTopic + '/#');
-    mqttLog.info("MQTT connected");
+    mqttLog.info("MQTT connected and listen to "+cfg.mqttRootTopic + '/#');
 });
 mqttClient.on('error', (error) => {
     mqttLog.info("MQTT Error: "+error);
@@ -68,7 +68,7 @@ io.on('connection', (socket) => {
     
     socket.on('poll', (data) => {
         socketsLog.debug('Client ask for ' + data.toString() + ' on ' + socket.id);
-        socketsLog.debug("Send to client " + data.toString() + " value: " + topicHandler.respondClient(data.toString()).message+ + " ("+ topicHandler.respondClient(data.toString()).formattedMessage)+")";
+        socketsLog.debug("Send to client " + data.toString() + " value: " + topicHandler.respondClient(data.toString()).message+ " ("+ topicHandler.respondClient(data.toString()).formattedMessage)+")";
     });
     socket.on('chart', (data) => {
         socketsLog.debug('CHART: Client ask for ' + data.topics.toString() + ' with ' + data.interval.toString() + ' on ' + socket.id);        

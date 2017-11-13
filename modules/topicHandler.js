@@ -82,9 +82,9 @@ class TH {
                 post.formattedMessage = post.formattedMessage.replace('.', ','); // replace dot by comma
                 console.log("Formatted message: " + post.formattedMessage);
             }
-            console.log("Send delayed");
-            setTimeout(()=>this.socketsClient.emit(topic.toString(),post),2000); // send delayed just for debuging
-            // this.socketsClient.emit(topic.toString(),post);
+            // console.log("Send delayed");
+            // setTimeout(()=>this.socketsClient.emit(topic.toString(),post),2000); // send delayed just for debuging
+            this.socketsClient.emit(topic.toString(),post);
         } else {post.formattedMessage=" No value in cache!";}
         return post;
     }

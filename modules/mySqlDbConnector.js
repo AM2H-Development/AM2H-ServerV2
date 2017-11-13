@@ -85,7 +85,7 @@ class DB {
     }
     
     _trans(topic){
-        return topic.toString().toLowerCase().replace(/\//g ,"__");
+        return topic.toString().replace(/\//g ,"__");
     }
 }
 var db = new DB();
