@@ -4,6 +4,7 @@ V2.0.3 vom 14.04.2017
 */
 /* global ds, Function, math */
 var socket = io();
+var mathScope={};
 
 $(document).ready(function () {
     initFields();
@@ -11,20 +12,37 @@ $(document).ready(function () {
 
 // global Helper functions
 var _h={
-    convertQualifiedTopic: function(topic){
+    convertQualifiedTopic: (topic) => {
         return topic.toString().toLowerCase().replace(/[\/\:]/g ,"__");
     },
-    extractTopic: function(qualifiedTopic){
+    extractTopic: (qualifiedTopic) => {
         return qualifiedTopic.toString().toLowerCase().replace(/\:.*/g ,"");
-    }    
+    },
+    convertAllQualifiedTopics: (rule)=>{
+        const regex = /\{\{([^\}]*)\}\}/g;
+        const str = rule;
+        var mRule = str;
+        let m;
+        while ((m = regex.exec(str)) !== null) {
+            if (m.index === regex.lastIndex) {regex.lastIndex++;}
+            mRule = mRule.replace(m[0].toString(),_h.convertQualifiedTopic(m[1]));
+        }
+        mRule = mRule.replace(/'/g, '"');
+        return mRule;
+    }
 };
 
 class CssRules {
-    constructor(arr=[]){
+    constructor(arr=[],initCls="df"){
+        this.initCls=initCls;
         this.rules=[]; // {cls:cls,rule:"true",mRule:"true"}
         arr.forEach((e)=>{
            this.add(e.cls,e.rule); 
         });
+        return this;
+    }
+    setInitClass(cls){
+        this.initCls=cls;
         return this;
     }
     add(cls,rule){
@@ -73,7 +91,6 @@ class Container {
         this.bgImage=bgImage;
         if (context) this.setBgImage(bgImage);
         this.progressBar =progressBar;
-        this.mathScope={};
         this.startFlag=false;
         this.socketListeners={};
         return this;
@@ -91,15 +108,27 @@ class Container {
     start(){
         this.startFlag=true;
     }
-    box(qualifiedTopic,pos="width: 130px; left:  10px; top: 50px;",cls="",onClick=""){
+    div(element,qualifiedTopic,pos,cls,onClick){
         if (!this.context) {console.error("Please set context first [setContext(context);]"); return this;}
         var id=this.currentId++;
 
         if (cls===""){cls= new CssRules();}
-        if (!(cls instanceof CssRules)) { cls= new CssRules([{cls:cls,rule:"true"}]); }
+        if (!(cls instanceof CssRules)) { cls= new CssRules([],cls); }
         
-        this.dfContainer[id]={id:id,renderer:"_box",qualifiedTopic:qualifiedTopic,pos:pos,cls:cls,onClick:onClick,init:true};         
-        return this._box(id);
+        this.dfContainer[id]={
+            id:id,
+            renderer:element,
+            qualifiedTopic:qualifiedTopic,
+            pos:pos,
+            cls:cls,
+            onClick:onClick,
+            init:true,
+            lastMessage:null
+        };         
+        return this[element](id);
+    }
+    box(qualifiedTopic,pos="width: 130px; left:  10px; top: 50px;",cls="df",onClick=""){
+        return this.div("_box",qualifiedTopic,pos,cls,onClick);
     }
     _box(id){
         var dfC=this.dfContainer[id];
@@ -107,29 +136,35 @@ class Container {
         var cls="";
         
         if (dfC.init) {
-            this._addSocketListener(_h.extractTopic(dfC.qualifiedTopic),id);
-            this._addToMathScope({message:"",formattedMessage:"",topic:_h.extractTopic(dfC.qualifiedTopic),ts:0},this); // Just make sure that is initialzied
+            cls=dfC.cls.initCls+" ";
+            if (dfC.qualifiedTopic !==""){
+                this._addSocketListener(_h.extractTopic(dfC.qualifiedTopic),id);
+                this._addToMathScope({message:"",formattedMessage:"",topic:_h.extractTopic(dfC.qualifiedTopic),ts:0}); // Just make sure that is initialzied
+            }
             var cssTopics = dfC.cls.getTopics();
-            //console.log("L for: "+id+" = ");
-            //console.log(cssTopics);
-            //console.log(cssTopics.length);
             for (var prop in cssTopics) {
-                this._addToMathScope({message:"",formattedMessage:"",topic:cssTopics[prop],ts:0},this); // Just make sure that is initialzied
+                this._addToMathScope({message:"",formattedMessage:"",topic:cssTopics[prop],ts:0}); // Just make sure that is initialzied
                 this._addSocketListener(cssTopics[prop],id);
             }
         } else{
-            cls = dfC.cls.eval(this.mathScope);
-            value=this.mathScope[_h.convertQualifiedTopic(dfC.qualifiedTopic)];
+            cls = dfC.cls.initCls+" "+dfC.cls.eval(mathScope);
+            if (dfC.qualifiedTopic !=="") value=mathScope[_h.convertQualifiedTopic(dfC.qualifiedTopic)];
         }
        
-        var html = '<div id="df' + dfC.id + '" class="df ' + cls + (dfC.init ? "wait":"") + '" style="' + dfC.pos + '" onclick="' + dfC.onClick + '">';
+        var html = '<div id="df' + dfC.id + '" class="' + cls + (dfC.init ? "wait":"") + '" style="' + dfC.pos + '" onclick="' + dfC.onClick + '">';
         var htmlClose = "</div>";
         
         if (dfC.init) {
-            $(this.context).append(html + this.progressBar + htmlClose);
+            $(this.context).append(html + ((dfC.qualifiedTopic !=="") ? this.progressBar:"") + htmlClose);
             dfC.init=false;
         } else {
             $("#df"+dfC.id).replaceWith(html + value + htmlClose);
+            if (dfC.lastMessage !== value) {
+                var color=$("#df"+dfC.id).css("borderColor");
+                $("#df"+dfC.id).css("borderColor","#ffffff");
+                $("#df"+dfC.id).animate({borderColor: color}, 400 );
+                dfC.lastMessage=value;
+            }
         }
         return this;
     }
@@ -141,21 +176,36 @@ class Container {
         }
     }
     _socketListenerHandler(fullTopic,id,scope){
-        this._addToMathScope(fullTopic, scope);
+        this._addToMathScope(fullTopic);
         if (this.startFlag) scope[scope.dfContainer[id].renderer](id);
     }
-    _addToMathScope(fullTopic, scope){
+    _addToMathScope(fullTopic){
         var __m  = _h.convertQualifiedTopic(fullTopic.topic+":message");
         var __fm = _h.convertQualifiedTopic(fullTopic.topic+":formattedMessage");
         var __ts = _h.convertQualifiedTopic(fullTopic.topic+":ts");
-        scope.mathScope[__m]=fullTopic.message;
-        scope.mathScope[__fm]=fullTopic.formattedMessage;
-        scope.mathScope[__ts]=fullTopic.ts;
+        mathScope[__m]=fullTopic.message;
+        mathScope[__fm]=fullTopic.formattedMessage;
+        mathScope[__ts]=fullTopic.ts;
     }
-    send(topicmessage){
+    send(topicmessage){ // {topic: "topic", message: "message"}
         //console.log(topicmessage);
         if (!isNaN(topicmessage.message)) topicmessage.message+="";
         //console.log(topicmessage);
         socket.emit('set',topicmessage);
     }
-}
+};
+
+function emit(topic,message){
+    var topicmessage={topic:topic, message:message};
+    if (!isNaN(topicmessage.message)) topicmessage.message+="";
+    // console.log(topicmessage);
+    socket.emit('set',topicmessage);
+};
+
+function mathEval(eval){
+    eval = _h.convertAllQualifiedTopics(eval);
+    // console.log(eval + " = "); 
+    var res = math.eval(eval,mathScope);
+    // console.log(res);
+    return res;
+};

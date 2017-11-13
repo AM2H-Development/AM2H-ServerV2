@@ -82,8 +82,8 @@ class TH {
                 post.formattedMessage = post.formattedMessage.replace('.', ','); // replace dot by comma
                 console.log("Formatted message: " + post.formattedMessage);
             }
-        }
         this.socketsClient.emit(topic.toString(),post);
+        } else {post.formattedMessage=" No value in cache!";}
         return post;
     }
 

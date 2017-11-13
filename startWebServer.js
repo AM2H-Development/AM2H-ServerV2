@@ -68,7 +68,7 @@ io.on('connection', (socket) => {
     
     socket.on('poll', (data) => {
         socketsLog.debug('Client ask for ' + data.toString() + ' on ' + socket.id);
-        socketsLog.debug("Send to client " + data.toString() + " value: " + topicHandler.respondClient(data.toString()).message);
+        socketsLog.debug("Send to client " + data.toString() + " value: " + topicHandler.respondClient(data.toString()).message+ + " ("+ topicHandler.respondClient(data.toString()).formattedMessage)+")";
     });
     socket.on('chart', (data) => {
         socketsLog.debug('CHART: Client ask for ' + data.topics.toString() + ' with ' + data.interval.toString() + ' on ' + socket.id);        

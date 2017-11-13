@@ -42,7 +42,7 @@ html>body {
     vertical-align: middle;
     display: table-cell;
 }
-.df  {
+.df {
     border: 1px solid black;
     background-color: lightyellow;
     padding-left: 1px;
@@ -56,9 +56,30 @@ html>body {
     font-weight: 500;
     line-height: normal;
 }
+.red {
+    background-color:lightsalmon !important;    
+}
 .img{
     position:absolute;
-}
+    min-height: 17px;
+    height: auto;
+ }
+.bulp {
+    position:absolute;
+    height: 50px;
+    width: 50px;
+    background-image: url("icons/Light_bulb_(grey)_icon.svg");
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    background-origin: content-box;
+ }
+ .bulp.on{
+     background-image: url("icons/Light_bulb_(yellow)_icon.svg") !important;
+ }
+ .bulp.off{
+     background-image: url("icons/Light_bulb_(outline)_icon.svg") !important;
+ }
+ 
 .inp{
     position:absolute;
 }

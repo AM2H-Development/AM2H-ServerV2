@@ -55,9 +55,10 @@ var topics = {
     "mh/l/h1/state/t02":{
         message:"456"  
     },
-    "mh/location/raum1/state/switch":{
-        
-    },
+    "mh/location/raum1/state/switch":{},
+    "mh/l/lamp/state":{},
+    "mh/event/timer/seconds":{},
+    "mh/event/timer/minutes":{},
     "mh/l/h1/state/t03":{
         message:"1024"
     }
