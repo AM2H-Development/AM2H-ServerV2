@@ -1,64 +1,67 @@
 /* 
  * AM2H V.2.0.0 (c)2017 
  */
-/* global c, v */
+/* global c, v, socket, bgImage, re, fo, cp */
 
-var bgImage = {
-    "background-image": "url(\"http://clicca.de/TempEGV2_image.svg\")",
-    "width": "1030px",
-    "height": "620px",
-    "background-size": "1030px 620px"
-};
-var re = function(id,val,style){
-    if (parseInt(val)>0){
-        style +="background-color: lightgreen;"
-    } else {
-        style +="background-color: lightyellow;"
-        val = val.substr(1);
-    }
-    return "<div class=\"df\" id=\""+id+"\" style=\""+style+"\">"+val+"</div>";
-};
-var re1 = function(id,val,style){
-    if (parseInt(val)<0){
-        style +="background-color: lightgreen;"
-    } else {
-        style +="background-color: lightyellow;"
-           }
-    return "<div class=\"df\" id=\""+id+"\" style=\""+style+"\">"+val+"</div>";
-};
-var re2 = function(id,val,style){
-    if (parseInt(val)<0){
-        style +="background-color: lightgreen;"
-    } else {
-        style +="background-color: lightyellow;"
-           }
-    return "<div class=\"df\" id=\""+id+"\" style=\""+style+"\">"+val+"</div>";
-};
-var cp = function(a){
+var cp1 = function(a){
     var val = v.asF(a[0])-v.asF(a[1]);
-    // if (val + v.asF(a[1])>0) val *=-1; 
     return val;
 };
-var fo = function(val,prescale,fraction,unit){
-    // val =  (val+" ").replace(",", ".");
-    val /= prescale;
-    return val.toLocaleString('de-DE', {minimumFractionDigits: fraction, maximumFractionDigits: fraction}) + unit;
+
+var cp2 = function(a){
+    var val = ((v.asF(a[0])-v.asF(a[1]))-(v.asF(a[2])-v.asF(a[3]))) * 10;
+    return val;
 };
 
 function initFields(){
     c.setContext("#contentlayer");
-    c.setBgImage(bgImage);
+    c.setBgImage({
+        "background-image": "url(\"http://clicca.de/TempEGV2_image.svg\")",
+        "width": "1030px",
+        "height": "620px",
+        "background-size": "1030px 620px"
+            });
     c.setDefaultValue("wait..");
-    c.addDF(["akm/d04/state/temp1"],"width: 56px; left:  10px; top: 200px;"," °C" );
-    c.addDF(["akm/d04/state/hum1"],"width: 56px; left:  10px; top: 225px;"," %" );
-    c.addDF(["akm/d04/state/temp2"],"width: 56px; left:  10px; top: 250px;"," °C" );
-    c.addDF(["akm/d04/state/hum2"],"width: 56px; left:  10px; top: 275px;"," %" );
-    c.addDF(["akm/m01/state/power01"],"width: 86px; left:  10px; top: 350px;"," kW",null,null,null,100,1 );
-    c.addDF(["akm/m01/state/counter01"],"width: 86px; left:  10px; top: 375px;"," m³/d",null,null,null,100,2  );
-    c.addDF(["akm/m01/state/counter02"],"width: 86px; left:  10px; top: 400px;"," m³/m",null,null,null,100,2 );
-    c.addDF(["akm/m01/state/counter03"],"width: 86px; left:  10px; top: 425px;"," m³",null,null,null,100,2 );
-    c.addDF(["akm/m02/state/power01"],"width: 78px; left:  212px; top: 363px;"," W",re1,null,null,100,1);
-    c.addDF(["akm/m03/state/power01"],"width: 78px; left:  425px; top: 363px;"," W",re2,null,null,100,1);
-    c.addDF(["akm/m02/state/power01","akm/m03/state/power01"],"width: 78px; left:  212px; top: 307px;"," W",null,cp,null,100,1); 
-     
+    
+    c.addDF({   topics: ["home/state/heating/vitotronic/temperatureOutside"],
+                style: "width: 56px; left: 158px; top: 311px;",
+                unit: " °C",
+                renderer: re.clickable,
+                prescale: 10,
+                fraction: 1
+            });    
+    
+    c.addDF({   topics: ["home/state/location/Technikraum/temperature"],
+                style: "width: 56px; left: 808px; top: 400px;",
+                unit: " °C",
+                renderer: re.clickable,
+                prescale: 10,
+                fraction: 1
+            });
+        c.addDF({   topics: ["home/state/location/Technikraum/humitidy"],
+                style: "width: 56px; left: 808px; top: 425px;",
+                unit: " %",
+                renderer: re.clickable,
+                prescale: 10,
+                fraction: 1
+            });     
+            
+    c.addDF({   topics: ["home/state/metering/gasmeter/counterConsumptionTotal","home/state/metering/gasmeter/counterConsumptionLastDay","home/state/metering/gasmeter/counterConsumptionWarmWaterTotal","home/state/metering/gasmeter/counterConsumptionWarmWaterLastDay"],
+                style: "width: 78px; left:  136px; top: 341px;",
+                unit: " kWh/d",
+                renderer: re.none,
+                compute: cp2,
+                prescale: 100,
+                fraction: 1
+            });
+            
+    c.addDF({   topics: ["home/state/metering/gasmeter/counterConsumptionTotal","home/state/metering/gasmeter/counterConsumptionLastMonth","home/state/metering/gasmeter/counterConsumptionWarmWaterTotal","home/state/metering/gasmeter/counterConsumptionWarmWaterLastMonth"],
+                style: "width: 78px; left:  136px; top: 366px;",
+                unit: " kWh/m",
+                renderer: re.none,
+                compute: cp2,
+                prescale: 100,
+                fraction: 0
+            });                  
+            
 }    

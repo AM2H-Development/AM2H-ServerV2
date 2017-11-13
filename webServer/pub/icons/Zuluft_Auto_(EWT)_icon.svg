@@ -9,10 +9,9 @@
 <g>
 	<path fill="#E8EAF4" stroke="#000000" stroke-linecap="round" d="M14.5,0.5"/>
 	<path fill="#E8EAF4" stroke="#000000" stroke-linecap="round" d="M21.5,14.5"/>
-	<rect x="0.5" y="0.5" fill="#E7EAF5" stroke="#000000" stroke-linecap="round" width="28" height="28"/>
-	<path stroke="#000000" stroke-linecap="round" d="M13.102,14.5c0,0.771,0.623,1.398,1.398,1.398c0.775,0,1.398-0.627,1.398-1.398
-		c0-0.77-0.623-1.398-1.398-1.398C13.725,13.102,13.102,13.73,13.102,14.5z"/>
-	<path fill="#E8EAF4" stroke="#000000" stroke-width="2" stroke-linecap="round" d="M3.301,25.703"/>
-	<path fill="#E8EAF4" stroke="#000000" stroke-width="2" stroke-linecap="round" d="M25.699,3.297"/>
+	<rect x="0.5" y="0.5" fill="#FCFBE4" stroke="#000000" stroke-linecap="round" width="28" height="28"/>
+	<path fill="#E8EAF4" stroke="#000000" stroke-linecap="round" d="M13.102,14.5c0,0.771,0.623,1.398,1.398,1.398
+		c0.775,0,1.398-0.627,1.398-1.398c0-0.77-0.623-1.398-1.398-1.398C13.725,13.102,13.102,13.73,13.102,14.5z"/>
+	<line fill="#E8EAF4" stroke="#000000" stroke-width="2" stroke-linecap="round" x1="25.699" y1="3.297" x2="3.301" y2="25.703"/>
 </g>
 </svg>
