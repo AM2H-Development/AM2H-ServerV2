@@ -80,16 +80,16 @@ t.addLogger({topic:"home/state/location/Technikraum/humitidy",condition:"every",
 
 // Temperaturen OG
 
-t.addLogger({topic:"home/state/heating/manifoldUpperFloor/temperatureSupplyFlow",condition:"every",interval:15}).addCleanup({unit:"years",lifespan:10});
-t.addLogger({topic:"home/state/heating/manifoldUpperFloor/temperatureReturnFlow",condition:"every",interval:15}).addCleanup({unit:"years",lifespan:10});
-t.addLogger({topic:"home/state/heating/manifoldUpperFloor/temperatureReturnFlowGast",condition:"every",interval:15}).addCleanup({unit:"years",lifespan:10});
-t.addLogger({topic:"home/state/heating/manifoldUpperFloor/temperatureReturnFlowToilette",condition:"every",interval:15}).addCleanup({unit:"years",lifespan:10});
-t.addLogger({topic:"home/state/heating/manifoldUpperFloor/temperatureReturnFlowKind",condition:"every",interval:15}).addCleanup({unit:"years",lifespan:10});
-t.addLogger({topic:"home/state/heating/manifoldUpperFloor/temperatureReturnFlowSchlafen",condition:"every",interval:15}).addCleanup({unit:"years",lifespan:10});
-t.addLogger({topic:"home/state/heating/manifoldUpperFloor/temperatureReturnFlowBad-A",condition:"every",interval:15}).addCleanup({unit:"years",lifespan:10});
-t.addLogger({topic:"home/state/heating/manifoldUpperFloor/temperatureReturnFlowBad-B",condition:"every",interval:15}).addCleanup({unit:"years",lifespan:10});
-t.addLogger({topic:"home/state/heating/manifoldUpperFloor/temperatureReturnFlowBad-Heizkoerper",condition:"every",interval:15}).addCleanup({unit:"years",lifespan:10});
-t.addLogger({topic:"home/state/heating/manifoldUpperFloor/temperatureReturnFlowFlur",condition:"every",interval:15}).addCleanup({unit:"years",lifespan:10});
+t.addLogger({topic:"home/state/heating/upperFloor/temperatureSupplyFlow",condition:"every",interval:15}).addCleanup({unit:"years",lifespan:10});
+t.addLogger({topic:"home/state/heating/upperFloor/temperatureReturnFlow",condition:"every",interval:15}).addCleanup({unit:"years",lifespan:10});
+t.addLogger({topic:"home/state/heating/upperFloor/temperatureReturnFlowGast",condition:"every",interval:15}).addCleanup({unit:"years",lifespan:10});
+t.addLogger({topic:"home/state/heating/upperFloor/temperatureReturnFlowToilette",condition:"every",interval:15}).addCleanup({unit:"years",lifespan:10});
+t.addLogger({topic:"home/state/heating/upperFloor/temperatureReturnFlowKind",condition:"every",interval:15}).addCleanup({unit:"years",lifespan:10});
+t.addLogger({topic:"home/state/heating/upperFloor/temperatureReturnFlowSchlafen",condition:"every",interval:15}).addCleanup({unit:"years",lifespan:10});
+t.addLogger({topic:"home/state/heating/upperFloor/temperatureReturnFlowBadA",condition:"every",interval:15}).addCleanup({unit:"years",lifespan:10});
+t.addLogger({topic:"home/state/heating/upperFloor/temperatureReturnFlowBadB",condition:"every",interval:15}).addCleanup({unit:"years",lifespan:10});
+t.addLogger({topic:"home/state/heating/upperFloor/temperatureReturnFlowBadHK",condition:"every",interval:15}).addCleanup({unit:"years",lifespan:10});
+t.addLogger({topic:"home/state/heating/upperFloor/temperatureReturnFlowFlur",condition:"every",interval:15}).addCleanup({unit:"years",lifespan:10});
 
 // Wasser
 

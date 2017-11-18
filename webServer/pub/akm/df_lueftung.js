@@ -4,7 +4,7 @@
 
 // Formatierunsoptionen
 
-var lower = new CssRules()
+var color = new CssRules()
     .add("red","{{home/state/ventilation/airDistribution/temperatureDifference:message}}>0")
     .add("blue","{{home/state/ventilation/airDistribution/temperatureDifference:message}}<=0")
 ;
@@ -38,21 +38,11 @@ function initFields(){
         .box("home/state/ventilation/airDistribution/humiditySupplyAir:formattedMessage","width: 56px; left: 689px; top: 432px;")
         .box("home/state/ventilation/airDistribution/temperatureExhaustAir:formattedMessage","width: 56px; left: 689px; top: 341px;")
         .box("home/state/ventilation/airDistribution/humidityExhaustAir:formattedMessage","width: 56px; left: 689px; top: 365px;")
-        .box("home/state/ventilation/airDistribution/temperatureDifference:formattedMessage","width: 56px; left:  795px; top: 386px;",lower)
+        .box("home/calc/ventilation/airDistribution/temperatureDifference:formattedMessage","width: 56px; left:  795px; top: 386px;",color)
         //.box("home/state/ventilation/intakeAirHeatExchanger/temperatureUpperThreshold","width: 56px; left: 237px; top: 518px;")
         //.box("home/state/ventilation/intakeAirHeatExchanger/temperatureLowerThreshold","width: 56px; left: 237px; top: 542px;")
         .box("","left: 186px; top: 415px;",valve1)
         .box("","left: 391px; top: 428px;",valve2)
-
-        
-            
-        //.box("home/event/timer/seconds:ts","width: 80px; left:  10px; top: 90px;")
-        //.box("home/event/timer/seconds:formattedMessage","width: 300px; left:  10px; top: 130px;")
-        //.box("home/event/timer/minutes:formattedMessage","width: 300px; left:  10px; top: 170px;",toggle)
-        //.box("","left:  10px; top: 210px;",bulp,"emit('mh/l/lamp/state',mathEval('({{mh/l/lamp/state:message}}==0)?\\'1\\':\\'0\\' '));")
-        //.box("","left:  10px; top: 250px;","bulp on", "emit('mh/l/lamp/state',1); mathEval('{{mh/l/lamp/state:message}}');")
-        //.box("","left:  60px; top: 250px;","bulp off","emit('mh/l/lamp/state',0); mathEval('{{mh/l/lamp/state:message}}');")
-        //.inp("home/event/timer/seconds:formattedMessage","width: 300px; left:  10px; top: 320px;")
 
         .start();
     
