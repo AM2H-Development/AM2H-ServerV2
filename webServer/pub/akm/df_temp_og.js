@@ -6,7 +6,7 @@
 
 var color = new CssRules()
     .add("red","{{home/state/heating/vitotronic/modeHeaterValve:message}}==1")
-    .add("yellow","{{ome/state/heating/vitotronic/modeHeaterValve:message}}!=1")        
+    .add("yellow","{{home/state/heating/vitotronic/modeHeaterValve:message}}!=1")        
 ;
 
 function initFields(){

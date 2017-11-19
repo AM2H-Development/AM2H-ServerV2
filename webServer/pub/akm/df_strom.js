@@ -20,13 +20,15 @@ function initFields(){
         .box("home/state/metering/powermeterPV/powerActual:formattedMessage","width: 78px; left: 432px; top: 355px;",color)
         .box("home/calc/metering/powermeter/powerConsumptionActual:formattedMessage","width: 78px; left:  208px; top: 209px;")
 
-        .box("home/calc/metering/powermeter/counterDailyConsumption:formattedMessage","width: 88px; left: 198px; top: 386px;")
-        .box("home/calc/metering/powermeter/counterDailyFeedIn:formattedMessage","width: 88px; left: 198px; top: 410px;")
-        .box("home/calc/metering/powermeter/counterMonthlyFeedIn:formattedMessage","width: 88px; left: 198px; top: 441px;")
+        .box("home/calc/metering/powermeter/counterConsumptionTotalDay:formattedMessage","width: 88px; left:  198px; top: 240px;")
+        .box("home/calc/metering/powermeter/counterConsumptionActualDay:formattedMessage","width: 88px; left: 198px; top: 386px;")
+        .box("home/calc/metering/powermeter/counterFeedInActualDay:formattedMessage","width: 88px; left: 198px; top: 410px;")
+        .box("home/calc/metering/powermeter/counterFeedInActualMonth:formattedMessage","width: 88px; left: 198px; top: 441px;")
+        .box("home/calc/metering/powermeter/counterShare:formattedMessage","width: 78px; left:  208px; top: 525px;")
 
-        .box("home/calc/metering/powermeterPV/counterDailyConsumption:formattedMessage","width: 88px; left: 422px; top: 386px;")
-        .box("home/calc/metering/powermeterPV/counterDailyFeedIn:formattedMessage","width: 88px; left: 422px; top: 410px;")
-        .box("home/calc/metering/powermeterPV/counterMonthlyFeedIn:formattedMessage","width: 88px; left: 422px; top: 441px;")
+        .box("home/calc/metering/powermeterPV/counterConsumptionActualDay:formattedMessage","width: 88px; left: 422px; top: 386px;")
+        .box("home/calc/metering/powermeterPV/counterFeedInActualDay:formattedMessage","width: 88px; left: 422px; top: 410px;")
+        .box("home/calc/metering/powermeterPV/counterFeedInActualMonth:formattedMessage","width: 88px; left: 422px; top: 441px;")
 
         .start();
     

@@ -44,6 +44,7 @@ and open the template in the editor.
 .valve1.autoAir{background-image: url("/icons/Zuluft_Auto_(direkt)_icon.svg") !important;}
 .valve1.autoEarth{background-image: url("/icons/Zuluft_Auto_(EWT)_icon.svg") !important;}
 .valve1.offline{background-image: url("/icons/Zuluft_Auto_(offline)_icon.svg") !important;}
+
  
  .valve2{
     position:absolute;
@@ -61,14 +62,17 @@ and open the template in the editor.
 .valve2.autoBypassOpenend{background-image: url("/icons/Bypass_Auto_(offen)_icon.sv") !important;}
  
 .red {
-    background-color:lightcoral !important;    
+    background-color:#FFCDD2 !important;    
 }
 .blue {
-    background-color:lightblue !important;    
+    background-color:#BBDEFB !important;    
 }
 .green {
-    background-color:lightgreen !important;    
+    background-color:#B9F6CA !important;    
 }
 .yellow {
     background-color:lightyellow !important;    
+}
+.purple {
+    background-color:#E8EAF6 !important;    
 }

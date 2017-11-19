@@ -34,7 +34,7 @@ var topics = {
         calc: "{{home/state/heating/vitotronic/counterBurnerStarts}}"
     },       
     "home/calc/heating/vitotronic/counterBurnerStartsActualDay":{
-        formatter:'concat(format(v/1,{notation: "fixed", precision: 1})," %")',
+        formatter:'concat(format(v/1,{notation: "fixed", precision: 0})," st/d")',
         message:0,
         triggers:["home/state/heating/vitotronic/counterBurnerStarts","home/state/heating/vitotronic/counterBurnerStartsLastDay"],
         calc: "{{home/state/heating/vitotronic/counterBurnerStarts}} - {{home/state/heating/vitotronic/counterBurnerStartsLastDay}}",
@@ -92,10 +92,10 @@ var topics = {
         calc: "{{home/state/ventilation/airDistribution/temperatureSupplyAir}} - {{home/state/ventilation/airDistribution/temperatureExhaustAir}}",
         logger:{condition:"none"}
     },
-    //"home/state/ventilation/intakeAirHeatExchanger/temperatureUpperThreshold":{formatter:'concat(format(v/10,{notation: "fixed", precision: 1})," °C")'},
-    //"home/state/ventilation/intakeAirHeatExchanger/temperatureLowerThreshold":{formatter:'concat(format(v/10,{notation: "fixed", precision: 1})," °C")'},
-    //"home/state/ventilation/intakeAirHeatExchanger/modeHeatExchanger":{},
-    "home/state/ventilation/intakeAirBypass/modeBypass":{},
+    "home/state/ventilation/airHeatExchanger/limitLowerTemp":{formatter:'concat(format(v/10,{notation: "fixed", precision: 1})," °C")'},
+    "home/state/ventilation/airHeatExchanger/limitUpperTemp":{formatter:'concat(format(v/10,{notation: "fixed", precision: 1})," °C")'},
+    "home/state/ventilation/airHeatExchanger/modeHeatExchanger":{},
+    "home/state/ventilation/airBypass/modeBypass":{},
     
     //df_strom
     
@@ -109,107 +109,123 @@ var topics = {
         logger: {condition:"none"}
     },      
     
-    "home/state/metering/powermeter/counterEnergyConsumptionTotal":{},
+    "home/state/metering/powermeter/counterConsumptionTotal":{},
     "home/state/metering/powermeter/counterConsumptionLastDay":{
         triggers:["home/event/timer/day"],
-        calc: "{{home/state/metering/powermeter/counterEnergyConsumptionTotal}}"
+        calc: "{{home/state/metering/powermeter/counterConsumptionTotal}}"
     },   
     "home/state/metering/powermeter/counterConsumptionLastMonth":{
         triggers:["home/event/timer/month"],
-        calc: "{{home/state/metering/powermeter/counterEnergyConsumptionTotal}}"
+        calc: "{{home/state/metering/powermeter/counterConsumptionTotal}}"
     },   
     "home/state/metering/powermeter/counterConsumptionLastYear":{
         triggers:["home/event/timer/year"],
-        calc: "{{home/state/metering/powermeter/counterEnergyConsumptionTotal}}"
+        calc: "{{home/state/metering/powermeter/counterConsumptionTotal}}"
     },       
     
-    "home/state/metering/powermeter/counterEnergyFeedInTotal":{},
+    "home/state/metering/powermeter/counterFeedInTotal":{},
     "home/state/metering/powermeter/counterFeedInLastDay":{
         triggers:["home/event/timer/day"],
-        calc: "{{home/state/metering/powermeter/counterEnergyFeedInTotal}}"
+        calc: "{{home/state/metering/powermeter/counterFeedInTotal}}"
     },   
     "home/state/metering/powermeter/counterFeedInLastMonth":{
         triggers:["home/event/timer/month"],
-        calc: "{{home/state/metering/powermeter/counterEnergyFeedInTotal}}"
+        calc: "{{home/state/metering/powermeter/counterFeedInTotal}}"
     },   
     "home/state/metering/powermeter/counterFeedInLastYear":{
         triggers:["home/event/timer/year"],
-        calc: "{{home/state/metering/powermeter/counterEnergyFeedInTotal}}}"
+        calc: "{{home/state/metering/powermeter/counterFeedInTotal}}}"
     },  
     
-    /*
-    "home/state/metering/powermeterPV/counterEnergyConsumptionTotal":{},
+    
+    "home/state/metering/powermeterPV/counterConsumptionTotal":{},
     "home/state/metering/powermeterPV/counterConsumptionLastDay":{
         triggers:["home/event/timer/day"],
-        calc: "{{home/state/metering/powermeterPV/counterEnergyConsumptionTotal}}"
+        calc: "{{home/state/metering/powermeterPV/counterConsumptionTotal}}"
     },   
     "home/state/metering/powermeterPV/counterConsumptionLastMonth":{
         triggers:["home/event/timer/month"],
-        calc: "{{home/state/metering/powermeterPV/counterEnergyConsumptionTotal}}"
+        calc: "{{home/state/metering/powermeterPV/counterConsumptionTotal}}"
     },   
     "home/state/metering/powermeterPV/counterConsumptionLastYear":{
         triggers:["home/event/timer/year"],
-        calc: "{{home/state/metering/powermeterPV/counterEnergyConsumptionTotal}}"
+        calc: "{{home/state/metering/powermeterPV/counterConsumptionTotal}}"
     },       
     
-    "home/state/metering/powermeterPV/counterEnergyFeedInTotal":{},
+    "home/state/metering/powermeterPV/counterFeedInTotal":{},
     "home/state/metering/powermeterPV/counterFeedInLastDay":{
         triggers:["home/event/timer/day"],
-        calc: "{{home/state/metering/powermeterPV/counterEnergyConsumptionTotal}}"
+        calc: "{{home/state/metering/powermeterPV/counterConsumptionTotal}}"
     },   
     "home/state/metering/powermeterPV/counterFeedInLastMonth":{
         triggers:["home/event/timer/month"],
-        calc: "{{home/state/metering/powermeterPV/counterEnergyConsumptionTotal}}"
+        calc: "{{home/state/metering/powermeterPV/counterConsumptionTotal}}"
     },   
     "home/state/metering/powermeterPV/counterFeedInLastYear":{
         triggers:["home/event/timer/year"],
-        calc: "{{home/state/metering/powermeterPV/counterEnergyConsumptionTotal}}"
+        calc: "{{home/state/metering/powermeterPV/counterConsumptionTotal}}"
     },
-    */
-
+ 
     "home/calc/metering/powermeter/counterConsumptionActualDay":{
     formatter:'concat(format(v/10000,{notation: "fixed", precision: 2})," kWh/d")',        
     message:0,
-    triggers:["home/state/metering/powermeter/counterEnergyConsumptionTotal","home/state/metering/powermeter/counterConsumptionLastDay"],
-    calc: "{{home/state/metering/powermeter/counterEnergyConsumptionTotal}} - {{home/state/metering/powermeter/counterConsumptionLastDay}}",
+    triggers:["home/state/metering/powermeter/counterConsumptionTotal","home/state/metering/powermeter/counterConsumptionLastDay"],
+    calc: "{{home/state/metering/powermeter/counterConsumptionTotal}} - {{home/state/metering/powermeter/counterConsumptionLastDay}}",
     logger: {condition:"none"}
     },
     "home/calc/metering/powermeter/counterFeedInActualDay":{
         formatter:'concat(format(v/10000,{notation: "fixed", precision: 2})," kWh/d")',        
         message:0,
-        triggers:["home/state/metering/powermeter/counterEnergyFeedInTotal","home/state/metering/powermeter/counterFeedInLastDay"],
-        calc: "{{home/state/metering/powermeter/counterEnergyFeedInTotal}} - {{home/state/metering/powermeter/counterFeedInLastDay}}",
+        triggers:["home/state/metering/powermeter/counterFeedInTotal","home/state/metering/powermeter/counterFeedInLastDay"],
+        calc: "{{home/state/metering/powermeter/counterFeedInTotal}} - {{home/state/metering/powermeter/counterFeedInLastDay}}",
         logger: {condition:"none"}
     },
     "home/calc/metering/powermeter/counterFeedInActualMonth":{
         formatter:'concat(format(v/10000,{notation: "fixed", precision: 0})," kWh/m")',        
         message:0,
-        triggers:["home/state/metering/powermeter/counterEnergyFeedInTotal","home/state/metering/powermeter/counterFeedInLastMonth"],
-        calc: "{{home/state/metering/powermeter/counterEnergyFeedInTotal}} - {{home/state/metering/powermeter/counterFeedInLastMonth}}",
+        triggers:["home/state/metering/powermeter/counterFeedInTotal","home/state/metering/powermeter/counterFeedInLastMonth"],
+        calc: "{{home/state/metering/powermeter/counterFeedInTotal}} - {{home/state/metering/powermeter/counterFeedInLastMonth}}",
         logger: {condition:"none"}
     }, 
+    
+    "home/calc/metering/powermeter/counterConsumptionTotalDay":{
+    formatter:'concat(format(v/10000,{notation: "fixed", precision: 2})," kWh/d")',        
+    message:0,
+    triggers:["home/state/metering/powermeter/counterConsumptionTotal","home/state/metering/powermeter/counterConsumptionLastDay","home/state/metering/powermeterPV/counterFeedInTotal","home/state/metering/powermeterPV/counterFeedInLastDay","home/state/metering/powermeter/counterFeedInTotal","home/state/metering/powermeter/counterFeedInLastDay"],
+    calc: "({{home/state/metering/powermeter/counterConsumptionTotal}} - {{home/state/metering/powermeter/counterConsumptionLastDay}}) + ({{home/state/metering/powermeterPV/counterFeedInTotal}} - {{home/state/metering/powermeterPV/counterFeedInLastDay}}) - ({{home/state/metering/powermeter/counterFeedInTotal}} - {{home/state/metering/powermeter/counterFeedInLastDay}})",
+    logger: {condition:"none"}
+    },
     
     "home/calc/metering/powermeterPV/counterConsumptionActualDay":{
     formatter:'concat(format(v/10000,{notation: "fixed", precision: 2})," kWh/d")',        
     message:0,
-    triggers:["home/state/metering/powermeterPV/counterEnergyConsumptionTotal","home/state/metering/powermeterPV/counterConsumptionLastDay"],
-    calc: "{{home/state/metering/powermeterPV/counterEnergyConsumptionTotal}} - {{home/state/metering/powermeterPV/counterConsumptionLastDay}}",
+    triggers:["home/state/metering/powermeterPV/counterConsumptionTotal","home/state/metering/powermeterPV/counterConsumptionLastDay"],
+    calc: "{{home/state/metering/powermeterPV/counterConsumptionTotal}} - {{home/state/metering/powermeterPV/counterConsumptionLastDay}}",
     logger: {condition:"none"}
     },
     "home/calc/metering/powermeterPV/counterFeedInActualDay":{
         formatter:'concat(format(v/10000,{notation: "fixed", precision: 2})," kWh/d")',        
         message:0,
-        triggers:["home/state/metering/powermeterPV/counterEnergyFeedInTotal","home/state/metering/powermeterPV/counterFeedInLastDay"],
-        calc: "{{home/state/metering/powermeterPV/counterEnergyFeedInTotal}} - {{home/state/metering/powermeterPV/counterFeedInLastDay}}",
+        triggers:["home/state/metering/powermeterPV/counterFeedInTotal","home/state/metering/powermeterPV/counterFeedInLastDay"],
+        calc: "{{home/state/metering/powermeterPV/counterFeedInTotal}} - {{home/state/metering/powermeterPV/counterFeedInLastDay}}",
         logger: {condition:"none"}
     },
     "home/calc/metering/powermeterPV/counterFeedInActualMonth":{
         formatter:'concat(format(v/10000,{notation: "fixed", precision: 0})," kWh/m")',        
         message:0,
-        triggers:["home/state/metering/powermeterPV/counterEnergyFeedInTotal","home/state/metering/powermeterPV/counterFeedInLastMonth"],
-        calc: "{{home/state/metering/powermeterPV/counterEnergyFeedInTotal}} - {{home/state/metering/powermeterPV/counterFeedInLastMonth}}",
+        triggers:["home/state/metering/powermeterPV/counterFeedInTotal","home/state/metering/powermeterPV/counterFeedInLastMonth"],
+        calc: "{{home/state/metering/powermeterPV/counterFeedInTotal}} - {{home/state/metering/powermeterPV/counterFeedInLastMonth}}",
         logger: {condition:"none"}
-    },     
+    },
+    
+    "home/calc/metering/powermeter/counterShare":{
+        formatter:'concat(format(v/0.01,{notation: "fixed", precision: 1})," %")',        
+        message:0,
+        triggers:["home/state/metering/powermeterPV/counterFeedInTotal","home/state/metering/powermeterPV/counterFeedInLastDay","home/state/metering/powermeter/counterFeedInTotal","home/state/metering/powermeter/counterFeedInLastDay","home/state/metering/powermeter/counterConsumptionTotal","home/state/metering/powermeter/counterConsumptionLastDay"],
+        calc: "(({{home/state/metering/powermeterPV/counterFeedInTotal}} - {{home/state/metering/powermeterPV/counterFeedInLastDay}}) - ({{home/state/metering/powermeter/counterFeedInTotal}} - {{home/state/metering/powermeter/counterFeedInLastDay}}))/(({{home/state/metering/powermeter/counterConsumptionTotal}} - {{home/state/metering/powermeter/counterConsumptionLastDay}}) + ({{home/state/metering/powermeterPV/counterFeedInTotal}} - {{home/state/metering/powermeterPV/counterFeedInLastDay}}) - ({{home/state/metering/powermeter/counterFeedInTotal}} - {{home/state/metering/powermeter/counterFeedInLastDay}}))",
+        logger: {condition:"none"}
+    },
+    
     //df_water
     
     "home/state/metering/gasmeter/counterConsumptionWTotal":{},     
@@ -257,6 +273,9 @@ var topics = {
     
     //df_temp_eg
     
+    "home/state/location/Technikraum/temperature":{formatter:'concat(format(v/10,{notation: "fixed", precision: 1})," °C")'},    
+    "home/state/location/Technikraum/humitidy":{formatter:'concat(format(v/10,{notation: "fixed", precision: 1})," %")'},  
+       
     //df_temp_og
     
     "home/state/heating/upperFloor/temperatureSupplyFlow":{formatter:'concat(format(v/10,{notation: "fixed", precision: 1})," °C")'},    

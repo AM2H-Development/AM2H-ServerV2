@@ -23,6 +23,7 @@ function initFields(){
         .box("home/state/heating/vitotronic/temperatureWater:formattedMessage","width: 48px; left: 310px; top: 450px;")
         .box("home/state/heating/vitotronic/powerBurner:formattedMessage","width: 56px; left: 622px; top: 332px;")
         .box("home/state/heating/vitotronic/powerPump:formattedMessage","width: 56px; left: 622px; top: 363px;")
+        .box("home/calc/heating/vitotronic/counterBurnerStartsActualDay:formattedMessage","width: 56px; left: 622px; top: 422px;")
 
         .box("home/state/metering/gasmeter/powerActual:formattedMessage","width: 56px; left: 325px; top: 332px;")
         .box("home/calc/metering/gasmeter/counterConsumptionActualDay:formattedMessage","width: 78px; left:  203px; top: 362px;")
