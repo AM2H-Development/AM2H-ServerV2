@@ -30,6 +30,10 @@ function initFields(){
         .box("home/calc/metering/gasmeter/counterConsumptionActualMonth:formattedMessage","width: 78px; left:  203px; top: 386px;")
         .box("home/calc/metering/gasmeter/counterConsumptionActualYear:formattedMessage","width: 78px; left:  203px; top: 416px;")
 
+        .box("home/state/heating/lowerFloor/temperatureSupplyFlow:formattedMessage","width: 56px; left: 764px; top: 450px;")
+        .box("home/state/heating/lowerFloor/temperatureReturnFlow:formattedMessage","width: 56px; left: 764px; top: 541px;")
+        .box("home/calc/heating/lowerFloor/temperatureDifference:formattedMessage","width: 46px; left: 814px; top: 496px;")
+            
         .box("home/state/heating/upperFloor/temperatureSupplyFlow:formattedMessage","width: 56px; left: 618px; top: 152px;")
         .box("home/state/heating/upperFloor/temperatureReturnFlow:formattedMessage","width: 56px; left: 618px; top: 244px;")
         .box("home/calc/heating/upperFloor/temperatureDifference:formattedMessage","width: 46px; left: 577px; top: 199px;")

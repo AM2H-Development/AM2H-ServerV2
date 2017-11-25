@@ -5,8 +5,9 @@
 // Formatierunsoptionen
 
 var color1 = new CssRules()
-    .add("red","{{home/state/ventilation/airDistribution/temperatureDifference:message}}>0")
-    .add("blue","{{home/state/ventilation/airDistribution/temperatureDifference:message}}<=0")
+    .add("red","{{home/calc/ventilation/airDistribution/temperatureDifference:message}}>0")
+    .add("blue","{{home/calc/ventilation/airDistribution/temperatureDifference:message}}<=0")
+;    
     
 var color2 = new CssRules()    
     .add("purple","{{home/state/ventilation/airHeatExchanger/limitUpperTemp:message}}")

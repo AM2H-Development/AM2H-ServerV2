@@ -64,7 +64,7 @@ var topics = {
         logger:{condition:"none"}
     },        
     "home/calc/metering/gasmeter/counterConsumptionActualMonth":{
-        formatter:'concat(format(v/100,{notation: "fixed", precision: 2})," m³/m")',          
+        formatter:'concat(format(v/100,{notation: "fixed", precision: 1})," m³/m")',          
         message:0,
         triggers:["home/state/metering/gasmeter/counterConsumptionTotal","home/state/metering/gasmeter/counterConsumptionLastMonth"],
         calc: "{{home/state/metering/gasmeter/counterConsumptionTotal}} - {{home/state/metering/gasmeter/counterConsumptionLastMonth}}",
@@ -274,7 +274,25 @@ var topics = {
     //df_temp_eg
     
     "home/state/location/Technikraum/temperature":{formatter:'concat(format(v/10,{notation: "fixed", precision: 1})," °C")'},    
-    "home/state/location/Technikraum/humitidy":{formatter:'concat(format(v/10,{notation: "fixed", precision: 1})," %")'},  
+    "home/state/location/Technikraum/humitidy":{formatter:'concat(format(v/10,{notation: "fixed", precision: 1})," %")'},
+    "home/state/heating/lowerFloor/temperatureSupplyFlow":{formatter:'concat(format(v/10,{notation: "fixed", precision: 1})," °C")'},    
+    "home/state/heating/lowerFloor/temperatureReturnFlow":{formatter:'concat(format(v/10,{notation: "fixed", precision: 1})," °C")'},  
+    "home/state/heating/lowerFloor/temperatureReturnFlowBuero":{formatter:'concat(format(v/10,{notation: "fixed", precision: 1})," °C")'},   
+    "home/state/heating/lowerFloor/temperatureReturnFlowWohnenA":{formatter:'concat(format(v/10,{notation: "fixed", precision: 1})," °C")'},   
+    "home/state/heating/lowerFloor/temperatureReturnFlowWohnenB":{formatter:'concat(format(v/10,{notation: "fixed", precision: 1})," °C")'},   
+    "home/state/heating/lowerFloor/temperatureReturnFlowEssen":{formatter:'concat(format(v/10,{notation: "fixed", precision: 1})," °C")'},   
+    "home/state/heating/lowerFloor/temperatureReturnFlowFlur":{formatter:'concat(format(v/10,{notation: "fixed", precision: 1})," °C")'},   
+    "home/state/heating/lowerFloor/temperatureReturnFlowKueche":{formatter:'concat(format(v/10,{notation: "fixed", precision: 1})," °C")'},   
+    "home/state/heating/lowerFloor/temperatureReturnFlowHwr":{formatter:'concat(format(v/10,{notation: "fixed", precision: 1})," °C")'},       
+    "home/state/heating/lowerFloor/temperatureReturnFlowBad":{formatter:'concat(format(v/10,{notation: "fixed", precision: 1})," °C")'},       
+  
+    "home/calc/heating/lowerFloor/temperatureDifference":{
+        formatter:'concat(format(v/10,{notation: "fixed", precision: 1})," °C")',
+        message:0,
+        triggers:["home/state/heating/lowerFloor/temperatureSupplyFlow","home/state/heating/lowerFloor/temperatureReturnFlow"],
+        calc: "{{home/state/heating/lowerFloor/temperatureSupplyFlow}} - {{home/state/heating/lowerFloor/temperatureReturnFlow}}",
+        logger:{condition:"none"}
+    },    
        
     //df_temp_og
     

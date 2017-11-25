@@ -59,7 +59,7 @@ and open the template in the editor.
 .valve2.manBypassClosed{background-image: url("/icons/Bypass_Hand_(geschlossen)_icon.svg") !important;}
 .valve2.manBypassOpened{background-image: url("/icons/Bypass_Hand_(offen)_icon.svg") !important;}
 .valve2.autoBypassClosed{background-image: url("/icons/Bypass_Auto_(geschlossen)_icon.svg") !important;}
-.valve2.autoBypassOpenend{background-image: url("/icons/Bypass_Auto_(offen)_icon.sv") !important;}
+.valve2.autoBypassOpenend{background-image: url("/icons/Bypass_Auto_(offen)_icon.svg") !important;}
  
 .red {
     background-color:#FFCDD2 !important;    
