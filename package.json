@@ -14,6 +14,7 @@
   "repository": "n/a",
   "contributors": [],
   "dependencies": {
+    "chart.js": "2.7.1",
     "ejs": "2.5.7",
     "express": "4.16.2",
     "mathjs": "3.18.0",

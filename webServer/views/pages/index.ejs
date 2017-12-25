@@ -14,10 +14,22 @@
     <% include ../partials/menu %>
 
       <!-- Content -->
-      <main class="mdl-layout__content" style="overflow:auto;">
- 
-        <!-- Datenfelder -->
-        <div id="contentlayer" class="page-content"> </div>
+      <main class="mdl-layout__content" >
+
+        <!-- Layout Data Fields -->
+        <section class="mdl-layout__tab-panel is-active" id="scroll-tab-1">
+            <div id="contentlayer" class="page-content"> </div>
+        </section>
+
+        <!-- Diagram Layer -->
+        <section class="mdl-layout__tab-panel" id="scroll-tab-2">
+            <div id="diagramlayer">
+                <div>Diagramm Header</div>
+                <div style="position: relative; height:80vh; width:100vw">
+                    <canvas id="myChart"></canvas>
+                </div>
+            </div>
+        </section>
 
         <% include ../partials/detailcard %>
       </main>

@@ -197,7 +197,7 @@ class Container {
             if (dfC.qualifiedTopic !=="") value=mathScope[_h.convertQualifiedTopic(dfC.qualifiedTopic)];
         }
        
-        var html = '<div id="df' + dfC.id + '" class="' + cls + (dfC.init ? "wait":"") + '" style="' + dfC.pos + '" onclick="' + dfC.onClick + '">';
+        var html = '<div data-topic="'+_h.extractTopic(dfC.qualifiedTopic)+'" id="df' + dfC.id + '" class="' + cls + (dfC.init ? "wait":"") + '" style="' + dfC.pos + '" onclick="' + dfC.onClick + '">';
         var htmlClose = "</div>";
         
         if (dfC.init) {
@@ -234,12 +234,13 @@ class Container {
         mathScope[__fm]=fullTopic.formattedMessage;
         mathScope[__ts]=fullTopic.ts;
     }
+    /*
     send(topicmessage){ // {topic: "topic", message: "message"}
         //console.log(topicmessage);
         if (!isNaN(topicmessage.message)) topicmessage.message+="";
         //console.log(topicmessage);
         socket.emit('set',topicmessage);
-    }
+    }*/
 };
 
 function emit(topic,message){
@@ -247,6 +248,11 @@ function emit(topic,message){
     if (!isNaN(topicmessage.message)) topicmessage.message+="";
     //console.log(topicmessage);
     socket.emit('set',topicmessage);
+};
+
+function chart(id){ // {topic: "topic", duration:"timestamp-timestamp"}
+    console.log(id.id);
+    socket.emit('chart',{topic:"123",interval:"456"});        
 };
 
 function mathEval(eval){

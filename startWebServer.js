@@ -71,7 +71,7 @@ io.on('connection', (socket) => {
         socketsLog.debug("Send to client " + data.toString() + " value: " + topicHandler.respondClient(data.toString()).message+ " ("+ topicHandler.respondClient(data.toString()).formattedMessage)+")";
     });
     socket.on('chart', (data) => {
-        socketsLog.debug('CHART: Client ask for ' + data.topics.toString() + ' with ' + data.interval.toString() + ' on ' + socket.id);        
+        socketsLog.debug('CHART: Client ask for ' + data.topic.toString() + ' with ' + data.interval.toString() + ' on ' + socket.id);        
     });
     socket.on('set', (data) => {
         mqttClient.publish(data.topic,data.message);

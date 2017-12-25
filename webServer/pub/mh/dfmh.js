@@ -29,6 +29,9 @@ function initFields(){
         .box("mh/event/timer/seconds:ts","width: 80px; left:  10px; top: 90px;",cls)
         .box("mh/event/timer/seconds:formattedMessage","width: 300px; left:  10px; top: 130px;")
         .box("mh/event/timer/minutes:formattedMessage","width: 300px; left:  10px; top: 170px;",toggle)
+
+        .box("","left:  50px; top: 210px;",bulp,"chart(this);")
+
         .box("","left:  10px; top: 210px;",bulp,"emit('mh/l/lamp/state',mathEval('({{mh/l/lamp/state:message}}==0)?\\'1\\':\\'0\\' '));")
         .box("","left:  10px; top: 250px;","bulp on", "emit('mh/l/lamp/state',1); mathEval('{{mh/l/lamp/state:message}}');")
         .box("","left:  60px; top: 250px;","bulp off","emit('mh/l/lamp/state',0); mathEval('{{mh/l/lamp/state:message}}');")
