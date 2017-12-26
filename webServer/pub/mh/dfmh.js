@@ -38,6 +38,9 @@ function initFields(){
         .inp("mh/event/timer/seconds:formattedMessage","width: 300px; left:  10px; top: 320px;")
 
         .start();
+
+    const d = new Diagram("#myChart").add("mh/event/timer/seconds","").add("mh/event/timer/minutes","").start();
     
     // console.log(c);
 }
+

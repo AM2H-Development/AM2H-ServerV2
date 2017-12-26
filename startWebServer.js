@@ -71,6 +71,9 @@ io.on('connection', (socket) => {
         socketsLog.debug("Send to client " + data.toString() + " value: " + topicHandler.respondClient(data.toString()).message+ " ("+ topicHandler.respondClient(data.toString()).formattedMessage)+")";
     });
     socket.on('chart', (data) => {
+        console.log("Chart: " + data.topic + " Interval: " + data.interval);
+        // if (!data.topic) return;
+        // if (!data.interval) return;
         socketsLog.debug('CHART: Client ask for ' + data.topic.toString() + ' with ' + data.interval.toString() + ' on ' + socket.id);        
     });
     socket.on('set', (data) => {
