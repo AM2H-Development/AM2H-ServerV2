@@ -73,7 +73,7 @@ io.on('connection', (socket) => {
     socket.on('chart', (data) => {
         console.log("Chart: " + data.topic + " Interval: " + data.interval);
         // if (!data.topic) return;
-        // if (!data.interval) return;
+        if (!data.interval) data.interval="";
         socketsLog.debug('CHART: Client ask for ' + data.topic.toString() + ' with ' + data.interval.toString() + ' on ' + socket.id);        
     });
     socket.on('set', (data) => {

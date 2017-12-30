@@ -28,6 +28,28 @@
                 <div style="position: relative; height:80vh; width:80vw">
                     <canvas id="myChart"></canvas>
                 </div>
+                
+                <div id="buttons">
+                    <div style="margin:10px;">
+                    <button class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored mdl-button--mini-fab mdl-shadow--4dp mdl-color--accent" id="duration-button">
+                        <i class="material-icons" role="presentation">sort</i>
+                        <span class="visuallyhidden">Sort</span>
+                    </button>
+
+                    <ul id="chart-menu-duration" class="chart-menu mdl-menu mdl-menu--top-right mdl-js-menu mdl-js-ripple-effect" data-mdl-for="duration-button">
+                    </ul>
+                    </div>
+                    <div style="margin:10px;">
+                    <button class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored mdl-shadow--4dp mdl-color--accent" id="chart-button">
+                        <i class="material-icons" role="presentation">show_chart</i>
+                        <span class="visuallyhidden">Select Chart</span>
+                    </button>
+
+                    <ul id="chart-menu-graph" class="chart-menu mdl-menu mdl-menu--top-right mdl-js-menu mdl-js-ripple-effect" data-mdl-for="chart-button">
+                    </ul>
+                    </div>
+                </div>
+
             </div>
         </section>
 

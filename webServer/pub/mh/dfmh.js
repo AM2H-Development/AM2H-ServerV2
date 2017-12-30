@@ -39,8 +39,14 @@ function initFields(){
 
         .start();
 
-    const d = new Diagram("#myChart").add("mh/event/timer/seconds","").add("mh/event/timer/minutes","").start();
-    
-    // console.log(c);
+    const d = new Diagram("#myChart","#dia")
+            .duration("1 Stunde",{'days' : 1})
+            .duration("1 Woche",{'weeks' : 1})
+            .list("Sekunden","mh/event/timer/seconds","")
+            .list("Minuten","mh/event/timer/minutes","")
+            .list("Minuten","mh/event/timer/minutes","")
+            .list("Minuten","mh/event/timer/minutes","")
+            .list("Minuten","mh/event/timer/minutes","")
+        
+            .start();
 }
-
