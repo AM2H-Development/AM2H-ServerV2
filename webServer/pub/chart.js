@@ -9,15 +9,17 @@ Chart.defaults.global.elements.line.fill = false;
 
 class Diagram {
     constructor(context=null, on=null, progressBar='<div><div style="width:100%;" class="mdl-progress mdl-js-progress mdl-progress__indeterminate"></div></div>'){
-        this.currentId=0;
-        this.currentListId=0;        
+        // this.currentId=0;
+        this.currentGraphId=0;        
+        this.graphs=[];
+        this.currentDurationId=0;        
+        this.durations=[];
+
         this.setContext(context,on);
         this.progressBar =progressBar;
         this.startFlag=false;
         this.runFlag=false;
         this.socketListeners={};
-        this.graphs=[];
-        this.durations=[];
         this.myChart;
         return this;
     }
@@ -27,11 +29,18 @@ class Diagram {
         return this;
     }
     _addSocketListener(topic,id,interval){
-        if (!this.socketListeners[topic+"###"+id]){
-            //console.log("Listening on:" + topic);
-            socket.on(topic,(fullTopic)=>this._socketListenerHandler(fullTopic,id,this));
-            socket.emit('chart',{topic:topic,interval:interval});
-            this.socketListeners[topic+"###"+id]={};
+        if (!this.socketListeners[topic+"#"+id]){
+            console.log("Listening on:" + topic+"#"+id);
+            socket.on(topic+"#"+id,(topic)=>this._socketListenerHandler(topic,id,this));
+            socket.emit('chart',{topicId:topic+"#"+id,interval:interval});
+            this.socketListeners[topic+"#"+id]={};
+        }
+    }
+    _removeSocketListener(topic,id){
+        if (this.socketListeners[topic+"#"+id]){
+            console.log("Remove on:" + topic);
+            socket.off(topic+"#"+id);
+            this.socketListeners[topic+"#"+id]=null;
         }
     }
     _socketListenerHandler(fullTopic,id,scope){
@@ -54,39 +63,45 @@ class Diagram {
             // }
         }
     }
-    list(name,topic){
-        this.graphs.push({id:this.currentListId,name:name,topic:topic});
-        this.currentListId++;
+    duration(name,duration){
+        this.durations.push({id:this.currentDurationId++,name:name,duration:duration});
         return this;
     }
-    _add(name,topic,duration){
+    graph(name,topic){
+        this.graphs.push({id:this.currentGraphId++,name:name,topic:topic});
+        return this;
+    }
+    /*_add(name,topic,duration){
         if (!this.context) {console.error("Please set context first [setContext(context);]"); return this;}
         var id=this.currentId++;
         this._addSocketListener(topic,id,duration);
         return this;
-    }
-    duration(name,duration){
-        this.durations.push({id:this.currentListId,name:name,duration:duration});
-        this.currentListId++;
-        return this;
-    }
+    }*/
     _update(e){
-        var o = $(e.target);
-        if (o.is("input:radio")){
-            console.log(o.prop( "checked" ));
+        var graph = this.graphs[$(e.target).val()];
+        var duration = this.durations[$("input[name=durations]:checked").val()];
+        console.log(graph);
+        // console.log(e.target.attributes["data-topic"].nodeValue);
+        console.log(duration);
+
+        if (e.target.checked) {
+            this._addSocketListener(graph.topic,graph.id,duration);
+            
+        } else {
+            this._removeSocketListener(graph.topic,graph.id);            
         }
     }
     start(){
         if (!this.context) {console.error("Please set context first [setContext(context);]"); return this;}
 
         this.durations.forEach(function(element) {
-            console.log(element);
+            // console.log(element);
             $("#chart-menu-duration").append(
-                '<li id="li-' + element.id + '" class="mdl-list__item">' +
+                '<li id="switch-li-' + element.id + '" class="mdl-list__item">' +
                 '<span class="mdl-list__item-primary-content">' + element.name + '</span>' +
                 '<span class="mdl-list__item-secondary-action">' + 
                 '<label style="display: inline;" class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="switch-' + element.id + '">' +
-                '<input type="radio" name="durations" value="' + element.id + '" id="switch-' + element.id + '" class="mdl-radio__button" checked />' +
+                '<input type="radio" name="durations" value="' + element.id + '" id="switch-' + element.id + '" class="chart-menu-duration mdl-radio__button" checked />' +
                 '</label>' +
                 '</span>' +
                 '</li>' 
@@ -94,20 +109,21 @@ class Diagram {
         });
         
         this.graphs.forEach(function(element) {
-            console.log(element);
+            // console.log(element);
             $("#chart-menu-graph").append(
-                '<li id="li-' + element.id + '" class="mdl-list__item">' +
+                '<li id="graph-li-' + element.id + '" class="mdl-list__item">' +
                 '<span class="mdl-list__item-primary-content">' + element.name + '</span>' +
                 '<span class="mdl-list__item-secondary-action">' + 
-                '<label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="switch-' + element.id + '">' +
-                '<input type="checkbox" id="switch-' + element.id + '" class="chart-menu-graph mdl-switch__input" />' +
+                '<label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="graph-' + element.id + '">' +
+                '<input type="checkbox" id="graph-' + element.id + '" value="' + element.id + '" class="chart-menu-graph mdl-switch__input" data-topic="' + element.topic + '"/>' +
                 '</label>' +
                 '</span>' +
                 '</li>' 
             );
         });
 
-        $(".chart-menu").change( (e)=>{this._update(e);});
+        // $(".chart-menu-duration").change( (e)=>{this._update(e);});
+        $(".chart-menu-graph").change( (e)=>{this._update(e);});
 
         this.startFlag=true;
 
@@ -157,6 +173,13 @@ class Diagram {
         });
     }
 }
+
+/*
+function chart(chart){ // {topic: "topic", duration:"timestamp-timestamp"}
+    console.log(chart);
+    socket.emit('chart',chart);        
+};
+*/
 
 
 // Utilities

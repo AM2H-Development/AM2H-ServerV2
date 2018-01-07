@@ -250,11 +250,6 @@ function emit(topic,message){
     socket.emit('set',topicmessage);
 };
 
-function chart(id){ // {topic: "topic", duration:"timestamp-timestamp"}
-    console.log(id.id);
-    socket.emit('chart',{topic:"123",interval:"456"});        
-};
-
 function mathEval(eval){
     eval = _h.convertAllQualifiedTopics(eval);
     // console.log(eval + " = "); 

@@ -38,13 +38,22 @@ app.get('/', (req, res) => {
     res.render('pages/index',{active:page, menu:menu, diagram:diagram });
 });
 
-// DB connection and topic cache
+// Connect to MySQL
+const db = require('./modules/mySqlDbConnector');
+db.connect();
+
+// Topic Cache
 const topicHandler = require('./modules/topicHandler');
+var th = new topicHandler(db);
+
+// Chart Handler
+const chartHandler = require('./modules/chartHandler');
+var ch = new chartHandler(db);
 
 // MQTT Client
 const mqtt = require('mqtt');
 const mqttClient  = mqtt.connect(cfg.mqttServer);
-topicHandler.setMqttClient(mqttClient);
+th.setMqttClient(mqttClient);
 
 mqttClient.on('connect', () => {
     mqttClient.subscribe(cfg.mqttRootTopic + '/#');
@@ -55,26 +64,30 @@ mqttClient.on('error', (error) => {
 });
 mqttClient.on('message', (topic, message, pg) => {
     mqttLog.debug("Received from MQTT: " + topic.toString() + " value: " + message.toString());
-    topicHandler.updateMessage(topic,message);    
+    th.updateMessage(topic,message);    
 });
 
 // Socket Server
 const socketIO = require('socket.io');
 const io = socketIO(server);
-topicHandler.setSocketsClient(io);
+th.setSocketsClient(io);
+ch.setSocketsClient(io);
 
 io.on('connection', (socket) => {
     socketsLog.info('Client connected');
     
     socket.on('poll', (data) => {
+        var topic = th.respondClient(data.toString());
         socketsLog.debug('Client ask for ' + data.toString() + ' on ' + socket.id);
-        socketsLog.debug("Send to client " + data.toString() + " value: " + topicHandler.respondClient(data.toString()).message+ " ("+ topicHandler.respondClient(data.toString()).formattedMessage)+")";
+        socketsLog.debug("Send to client " + data.toString() + " value: " + topic.message+ " ("+ topic.formattedMessage)+")";
     });
     socket.on('chart', (data) => {
-        console.log("Chart: " + data.topic + " Interval: " + data.interval);
-        // if (!data.topic) return;
         if (!data.interval) data.interval="";
-        socketsLog.debug('CHART: Client ask for ' + data.topic.toString() + ' with ' + data.interval.toString() + ' on ' + socket.id);        
+        if (!data.topicId) data.topicId="";
+        console.log("Chart: " + data.topicId + " Interval: " + data.interval);
+        ch.respondClient(data.topicId,data.interval);
+        // if (!data.topic) return;
+        socketsLog.debug('CHART: Client ask for ' + data.topicId.toString() + ' with ' + data.interval.toString() + ' on ' + socket.id);        
     });
     socket.on('set', (data) => {
         mqttClient.publish(data.topic,data.message);

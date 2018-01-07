@@ -8,15 +8,12 @@ var math = require('mathjs');
 // Load config
 var cfg = require('../cfg/config');
 
-// Connect to MySQL
-var db = require('./mySqlDbConnector');
-db.connect();
-
 // Load Topics Container
 var topics = require('../cfg/'+cfg.mqttRootTopic+'/topics');
 
 class TH {
-    constructor(){
+    constructor(db){
+        this.db = db; 
         require('./logger');
         this.dbLog = require('winston').loggers.get('db');
         this.tidx={}; // index of triggers
@@ -82,8 +79,7 @@ class TH {
                 post.formattedMessage = post.formattedMessage.replace('.', ','); // replace dot by comma
                 console.log("Formatted message: " + post.formattedMessage);
             }
-            // console.log("Send delayed");
-            // setTimeout(()=>this.socketsClient.emit(topic.toString(),post),2000); // send delayed just for debuging
+            // console.log("respond Client" + topic + " < " + post.formattedMessage);
             this.socketsClient.emit(topic.toString(),post);
         } else {post.formattedMessage=" No value in cache!";}
         return post;
@@ -149,18 +145,18 @@ class TH {
         // console.log("log_all");
         if (!topic.logger.newonly || (topic.message !== topic.oldMessage)){
             // console.log ("Topic to DB: " + topics[topic].topic);
-            db.writeTopic(topic);
+            this.db.writeTopic(topic);
         }
     }
 
     log_atMost(topic){
         // console.log("log_atMost");
         if ((!topic.logger.newonly || (topic.message !== topic.oldMessage)) && (topic.ts>topic.oldTs+topic.logger.interval*1000)){
-            db.writeTopic(topic);
+            this.db.writeTopic(topic);
         }
 
     }
 }
 
-var th = new TH();
-module.exports=th;
+// var th = new TH(db);
+module.exports=TH;
