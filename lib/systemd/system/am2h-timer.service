@@ -1,0 +1,19 @@
+[Unit]
+Description=Node Server starten
+
+After=multi-user.target
+
+[Service]
+WorkingDirectory=/opt/am2h-serverV2
+ExecStart=/usr/bin/node --expose-gc /opt/am2h-serverV2/startMqttTimer.js
+Restart=on-failure
+RestartSec=15
+
+StandardOutput=syslog
+StandardError=syslog
+User=XXX
+Group=XXX
+Environment=NODE_ENV=production
+
+[Install]
+WantedBy=multi-user.target
