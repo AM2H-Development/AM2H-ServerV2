@@ -80,7 +80,7 @@ class M {
                 var topic = obj.root + "/event/timer/seconds";
                 var message = moment().format();
                 mqttClient.publish(topic, message);
-                console.log(topic + " # " + message);
+                // console.log(topic + " # " + message);
                 obj.oldSeconds = moment().seconds();
             } else
                 return;
