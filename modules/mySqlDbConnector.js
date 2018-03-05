@@ -38,7 +38,10 @@ class DB {
         var _topic = this._trans(topicObject.topic);
 
         this.mysqlClient.query('INSERT INTO '+ this.cfg.database +'.' + _topic + ' SET ?', post, (error) =>{
-            if (error) this.dbLog.error(error.toString());
+            if (error) {
+                this.dbLog.error(error.toString());
+                process.exit(5);
+            }
         });
 
         if (topicObject.cleanup){
