@@ -14,17 +14,17 @@
   "repository": "n/a",
   "contributors": [],
   "dependencies": {
-    "chart.js": "2.7.1",
-    "ejs": "2.5.7",
-    "express": "4.16.2",
-    "mathjs": "3.19.0",
-    "moment": "2.20.1",
-    "mqtt": "2.15.0",
-    "mysql": "2.15.0",
-    "socket.io": "2.0.4",
-    "suncalc": "1.8.0",
-    "underscore": "1.8.3",
-    "winston": "2.4.0"
+    "chart.js": "^2.7.3",
+    "ejs": "^2.6.1",
+    "express": "^4.16.4",
+    "mathjs": "^5.4.0",
+    "moment": "^2.23.0",
+    "mqtt": "^2.18.8",
+    "mysql": "^2.16.0",
+    "socket.io": "^2.2.0",
+    "suncalc": "^1.8.0",
+    "underscore": "^1.9.1",
+    "winston": "^2.4.4"
   },
   "scripts": {
     "start": "node startWebServer.js"
