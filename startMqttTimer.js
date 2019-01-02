@@ -1,5 +1,5 @@
 /* 
- * MQTT Timer
+ * MQTT Timer V2
  */
 'use strict';
 
