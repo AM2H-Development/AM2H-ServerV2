@@ -6,11 +6,19 @@
 
 'use strict';
 
+var cfile="config"; // default config file
+
+if (typeof process.argv[2] !== 'undefined'){
+    cfile+="."+process.argv[2];
+}
+console.log("Config file is " + cfile);
+
 // Load Main Configuration
-var cfg = require('./cfg/config');
+var cfg = require('./cfg/'+cfile);
 
 // Load loggers for debug messages
-require('./modules/logger');
+require('./modules/logger')(cfg);
+
 var mainLog = require('winston').loggers.get('main');
 var httpLog = require('winston').loggers.get('http');
 var socketsLog = require('winston').loggers.get('sockets');
@@ -39,15 +47,15 @@ app.get('/', (req, res) => {
 });
 
 // Connect to MySQL
-const db = require('./modules/mySqlDbConnector');
+const db = require('./modules/mySqlDbConnector')(cfg);
 db.connect();
 
 // Topic Cache
-const topicHandler = require('./modules/topicHandler');
+const topicHandler = require('./modules/topicHandler')(cfg);
 var th = new topicHandler(db);
 
 // Chart Handler
-const chartHandler = require('./modules/chartHandler');
+const chartHandler = require('./modules/chartHandler')(cfg);
 var ch = new chartHandler(db);
 
 // MQTT Client
