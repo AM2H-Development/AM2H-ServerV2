@@ -1,5 +1,6 @@
 /* 
- * Config
+ * Config sample file
+ * edit and rename to config.js
  */
 
 var config = {
