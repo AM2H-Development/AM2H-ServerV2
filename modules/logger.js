@@ -1,6 +1,9 @@
+module.exports = function(cfg) {
 const DEBUGLEVEL='debug';
 const PRODUCTION='info';
-var cfg = require('../cfg/config');
+// var cfg = require('../cfg/config');
+
+// console.log(cfg);
 
 var winston = require('winston');
 winston.setLevels(winston.config.syslog.levels);
@@ -89,3 +92,5 @@ winston.loggers.add('topicsLogger', {
         filename: cfg.loggerRoot + '/logfiles/tlog.log'
     }
   });
+    
+};

@@ -2,11 +2,12 @@
  * Topic Handler and Connection to DB
  */
 
+module.exports = function(cfg) {
 // Libraries
 var math = require('mathjs');
 
 // Load config
-var cfg = require('../cfg/config');
+// var cfg = require('../cfg/config');
 
 // Load Topics Container
 var topics = require('../cfg/'+cfg.mqttRootTopic+'/topics');
@@ -159,4 +160,5 @@ class TH {
 }
 
 // var th = new TH(db);
-module.exports=TH;
+return TH;
+};

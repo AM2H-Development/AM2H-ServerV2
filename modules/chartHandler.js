@@ -3,10 +3,11 @@
  */
 
 // Libraries
+module.exports = function(cfg) {
 var math = require('mathjs');
 
 // Load config
-var cfg = require('../cfg/config');
+// var cfg = require('../cfg/config');
 
 class CH {
     constructor(db){
@@ -34,4 +35,5 @@ class CH {
     }
 }
 
-module.exports=CH;
+return CH;
+};

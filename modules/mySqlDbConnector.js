@@ -1,13 +1,15 @@
 /* 
  * Connector to DB
  */
+module.exports = function(cfg) {
+    
 var moment = require('moment');
 
 class DB {
     constructor(){
         this.mysqlClient;
-        this.cfg = require('../cfg/config');
-        require('./logger');
+        this.cfg = cfg; // require('../cfg/config');
+        require('./logger')(cfg);
         this.dbLog = require('winston').loggers.get('db');
     }
     connect(){
@@ -92,4 +94,5 @@ class DB {
     }
 }
 var db = new DB();
-module.exports=db;
+return db;
+};
