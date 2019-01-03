@@ -1,6 +1,6 @@
 /* 
  * Config sample file
- * edit and rename to config.js before start apps
+ * edit and rename to config.js before start the apps
  */
 
 var config = {
