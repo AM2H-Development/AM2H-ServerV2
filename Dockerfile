@@ -6,4 +6,6 @@ COPY . /home/node
 
 ADD run.sh /
 
+RUN npm install
+
 ENTRYPOINT ["/bin/sh", "/run.sh"]
