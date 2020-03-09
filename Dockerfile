@@ -1,4 +1,4 @@
-FROM node:10-alpine
+FROM nodered/node-red:latest
 EXPOSE 3000
 EXPOSE 4444
 
