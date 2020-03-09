@@ -1,3 +1,6 @@
+cp /usr/share/zoneinfo/Europe/Berlin /etc/localtime
+echo "Europe/Berlin" >  /etc/timezone
+
 node /theia/src-gen/backend/main.js /data --hostname=0.0.0.0 --port=4444 &
 node startMqttTimer &
 node startWebServer &
