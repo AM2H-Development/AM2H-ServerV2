@@ -1,5 +1,5 @@
 /* 
- * WebServer V2
+ * WebServer V2.1
  * communication with MQTT / MySQL / WebSockets
  */
 /* global __dirname */
