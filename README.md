@@ -1,5 +1,5 @@
 # AM2H-Server V2 (c)2017,2018,2019
-dev-2.0.2
+dev-2.1.0
 
 Rename cfg/config.sample.js to config.{cfgname}.js
 
