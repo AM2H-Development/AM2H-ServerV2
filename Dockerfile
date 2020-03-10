@@ -4,8 +4,8 @@ EXPOSE 3000
 WORKDIR /home/node
 COPY . /home/node
 
-ADD run.sh /
+## ADD run.sh /
 
 RUN npm install
 
-ENTRYPOINT ["/bin/sh", "/run.sh"]
+ENTRYPOINT ["/bin/sh", "./run.sh"]
