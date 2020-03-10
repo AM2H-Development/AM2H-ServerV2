@@ -8,4 +8,4 @@ COPY . /home/node
 
 RUN npm install
 
-ENTRYPOINT ["/bin/sh", "./run.sh"]
+ENTRYPOINT ["/bin/sh", "./docker-run.sh"]
