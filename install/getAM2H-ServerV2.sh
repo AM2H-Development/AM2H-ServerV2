@@ -1,7 +1,6 @@
 #!/bin/sh
 # Install by typing:
 # wget -q -O - https://raw.githubusercontent.com/AM2H-Development/AM2H-ServerV2/2.1.0/install/getAM2H-ServerV2.sh | bash -s https://github.com/AM2H-Development/AM2H-ServerV2-userdata.git
-echo /$1/
 
 mkdir AM2H-ServerV2
 cd AM2H-ServerV2
