@@ -7,10 +7,16 @@ var cfile="config"; // default config file
 if (typeof process.argv[2] !== 'undefined'){
     cfile+="."+process.argv[2];
 }
-console.log("Config file is " + cfile);
-
 // Load Main Configuration
-var cfg = require('./cfg/'+cfile);
+
+try {
+    var cfg = require('../user/cfg/'+cfile);
+} catch {
+    cfile+='.sample';
+    var cfg = require('../user/cfg/'+cfile);
+}
+
+console.log("Config file is " + cfile);
 
 // Load MQTT Timer
 const mqttTimer = require('./modules/mqttTimer');

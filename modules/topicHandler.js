@@ -10,7 +10,7 @@ var math = require('mathjs');
 // var cfg = require('../cfg/config');
 
 // Load Topics Container
-var topics = require('../cfg/'+cfg.mqttRootTopic+'/topics');
+var topics = require('../../user/server/topics');
 
 class TH {
     constructor(db){

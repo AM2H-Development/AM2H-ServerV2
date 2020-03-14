@@ -1,9 +1,6 @@
 module.exports = function(cfg) {
 const DEBUGLEVEL='debug';
 const PRODUCTION='info';
-// var cfg = require('../cfg/config');
-
-// console.log(cfg);
 
 var winston = require('winston');
 winston.setLevels(winston.config.syslog.levels);
@@ -17,7 +14,7 @@ winston.loggers.add('main', {
     },
     file: {
         level:DEBUGLEVEL,
-        filename: cfg.loggerRoot + '/logfiles/main.log'
+        filename: '../user/logfiles/main.log'
     }
   });
 
@@ -29,7 +26,7 @@ winston.loggers.add('http', {
     },
     file: {
         level:DEBUGLEVEL,
-        filename: cfg.loggerRoot + '/logfiles/http.log'
+        filename: '../user/logfiles/http.log'
     }
   });
 
@@ -41,7 +38,7 @@ winston.loggers.add('db', {
     },
     file: {
         level:DEBUGLEVEL,
-        filename: cfg.loggerRoot + '/logfiles/db.log'
+        filename: '../user/logfiles/db.log'
     }
   });
 
@@ -53,7 +50,7 @@ winston.loggers.add('sockets', {
     },
     file: {
         level:DEBUGLEVEL,
-        filename: cfg.loggerRoot + '/logfiles/sockets.log'
+        filename: '../user/logfiles/sockets.log'
     }
   });
 
@@ -65,7 +62,7 @@ winston.loggers.add('mqtt', {
     },
     file: {
         level:PRODUCTION,
-        filename: cfg.loggerRoot + '/logfiles/mqtt.log'
+        filename: '../user/logfiles/mqtt.log'
     }
   });
 
@@ -77,7 +74,7 @@ winston.loggers.add('timer', {
     },
     file: {
         level:DEBUGLEVEL,
-        filename: cfg.loggerRoot + '/logfiles/timer.log'
+        filename: '../user/logfiles/timer.log'
     }
   });
 
@@ -89,7 +86,7 @@ winston.loggers.add('topicsLogger', {
     },
     file: {
         level:DEBUGLEVEL,
-        filename: cfg.loggerRoot + '/logfiles/tlog.log'
+        filename: '../user/logfiles/tlog.log'
     }
   });
     
