@@ -15,3 +15,9 @@ git pull
 npm install
 
 PATH="$PATH:/home/project/AM2H-ServerV2/base/bin"
+
+cd ../base
+
+echo -e "Update local: getAM2H-ServerV2.sh"
+echo -e "Update remote: pushAM2H-ServerV2.sh"
+echo -e "Start the apps:\n node startMqttTimer &\n node startWebServer &"
