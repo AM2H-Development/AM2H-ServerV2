@@ -51,7 +51,7 @@ app.get('/', (req, res) => {
 });
 
 // Connect to MySQL
-const db = require('./modules/mySqlDbConnector')(cfg);
+const db = require('./modules/'+cfg.dbConnector)(cfg);
 db.connect();
 
 // Topic Cache
