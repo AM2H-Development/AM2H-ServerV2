@@ -1,0 +1,14 @@
+version: "3.7"
+services:
+  AM2H-Server:
+    image: "am2h/nodejs-theia:latest"
+    restart: unless-stopped
+    volumes:
+      - AM2H-Server_data:/home/project:cached
+    ports:
+      - "4444:4444"
+      - "3000:3000"
+      - "3001:3001"
+      - "4200:4200"
+volumes:
+  AM2H-Server_data:
