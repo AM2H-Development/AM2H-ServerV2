@@ -21,4 +21,5 @@ Start the apps locally (in Theia terminal):
 * node startWebServer {cfgname} &
 
 Start the apps in Docker container:
-* docker run -it -d -v AM2H-ServerV2_data:/home/project:cached --entrypoint node am2h/nodejs-theia:latest ./AM2H-ServerV2/base/startMqttTimer.js
+* docker run --name AM2H-MqqtTimer -u root -it -d -v am2h-serverv2_AM2H-ServerV2_data:/home/project:cached --entrypoint node am2h/nodejs-theia:latest /home/project/AM2H-ServerV2/base/startMqttTimer.js
+* docker run --name AM2H-ServerV2_Webserver -u root -it -d -p 3333:3000 -v am2h-serverv2_AM2H-ServerV2_data:/home/project:cached --entrypoint node am2h/nodejs-theia:latest /home/project/AM2H-ServerV2/base/startWebServer.js
