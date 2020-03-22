@@ -1,5 +1,5 @@
 #!/bin/sh
-# Update remote repositories
+# Update remote repositories V 2.1.1
 git config --global user.name "AM2H"
 git config --global user.email "am2h@qxf.de"
 
