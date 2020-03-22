@@ -2,6 +2,7 @@ version: "3.7"
 services:
   AM2H-Server:
     image: "am2h/nodejs-theia:latest"
+    user: root
     restart: unless-stopped
     volumes:
       - AM2H-ServerV2_data:/home/project:cached
