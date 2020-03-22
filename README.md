@@ -6,6 +6,11 @@ Setup Docker environment (Theia/Node.js/NPM):
 * cd AM2H-ServerV2/Docker
 * docker-compose -p AM2H-ServerV2 up -d
 
+[
+Stop Container:
+* docker-compose -p AM2H-ServerV2 down
+]
+
 Install the AM2H-ServerV2 app in Node.js / NPM environment (e.g. open Theia terminal):
 wget -q -O - https://raw.githubusercontent.com/AM2H-Development/AM2H-ServerV2/2.1.0/bin/getAM2H-ServerV2.sh | bash -s https://github.com/AM2H-Development/AM2H-ServerV2-userdata.git
 
