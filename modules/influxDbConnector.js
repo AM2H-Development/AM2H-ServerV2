@@ -4,44 +4,48 @@
 module.exports = function(cfg) {
     
 var moment = require('moment');
+const http = require('http');
 
 class DB {
     constructor(){
         this.mysqlClient;
-        this.cfg = cfg; // require('../cfg/config');
+        this.cfg = cfg;
         require('./logger')(cfg);
         this.dbLog = require('winston').loggers.get('db');
     }
     connect(){
+        this.dbLog.info("Using influxDB on " + this.cfg.influxServerUrl + " with DB:" + this.cfg.influxDatabase);
         return this;
     }
     writeTopic(topicObject){
-        // console.log("Write: " + topicObject.topic + " value: " + topicObject.message + " ts: " + topicObject.ts);
-        var post  = {ts: topicObject.ts, message: topicObject.message};
-        var _topic = this._trans(topicObject.topic);
+    const serverUrl = new URL(this.cfg.influxServerUrl);
+	var options = {
+          path: '/write?db='+ this.cfg.influxDatabase + '&precision=ms',
+          method: 'POST'
+        };
 
-        this.mysqlClient.query('INSERT INTO '+ this.cfg.database +'.' + _topic + ' SET ?', post, (error) =>{
-            if (error) {
-                this.dbLog.error(error.toString());
-                process.exit(5);
-            }
+        // console.log("Write: " + topicObject.topic + " value: " + topicObject.message + " ts: " + topicObject.ts);
+        var _topic = this._trans(topicObject.topic);
+        
+        // const postData= "home,dev=" + _topic.dev + ",loc=" + _topic.loc + " " + _topic.val + "=" + topicObject.message + " " + topicObject.ts;
+       //const postData= "home,dev=" + _topic.dev + ,val=" + _topic.val + " " + _topic.loc + "=" + topicObject.message + " " + topicObject.ts;     
+       const postData= "home,dev=" + _topic.dev + " " + _topic.val + "=" + topicObject.message + " " + topicObject.ts;                                                                                                                                                  
+        // console.log(postData);
+                
+        const req = http.request(serverUrl, options);
+        req.on('error', (e) => {
+         this.dbLog.error(`problem with request: ${e.message}`);
         });
 
-        if (topicObject.cleanup){
-            // console.log("cleanup");
-            var timestamp = moment().subtract(topicObject.cleanup.lifespan, topicObject.cleanup.unit).valueOf();
-            this.dbLog.info(moment().format("YYYY-MM-DD HH:mm:ss.S") + " cleaning " + topicObject.topic+ " to " + timestamp);
-
-            this.mysqlClient.query('DELETE FROM '+ this.cfg.database +'.' + _topic + ' WHERE ts < ?', [timestamp], (error) =>{
-                if (error) this.dbLog.error(error.toString());
-            });
-        }
+        // Write data to request body
+        req.write(postData);
+        req.end();
     }
     readTopic(topic, callback){
         var _topic = this._trans(topic);
-        // console.log(_topic);
+        console.log(_topic);
         
-        this.mysqlClient.query("CREATE TABLE IF NOT EXISTS " + this.cfg.database + "." + _topic +" ( `ts` BIGINT(20) NOT NULL , `message` VARCHAR(255) NOT NULL , PRIMARY KEY (`ts`));",
+        /* this.mysqlClient.query("CREATE TABLE IF NOT EXISTS " + this.cfg.database + "." + _topic +" ( `ts` BIGINT(20) NOT NULL , `message` VARCHAR(255) NOT NULL , PRIMARY KEY (`ts`));",
             (error) => {
                 if (error) this.dbLog.error("Error: connect ETIMEDOUT at CREATE TABLE");
             });
@@ -57,7 +61,7 @@ class DB {
                     var res = {"topic": topic, "message": results[0].message, "ts": results[0].ts};
                     callback(res);
                 }                        
-            });
+            }); */
     }
     
     _trans(topic){

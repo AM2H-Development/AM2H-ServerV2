@@ -35,11 +35,11 @@ var menu    = require('../user/web/menu');
 // Express Webserver and Socket.io
 const express = require('express');
 const path = require('path');
-const PORT = process.env.PORT || 3333;
+const PORT = process.env.PORT || 3000;
 const app = express();
 app.set('views', path.join(__dirname, '/webServer/views'));
 app.use(express.static(path.join(__dirname, 'webServer/pub')));
-app.use(express.static(path.join(__dirname,'../web')));
+app.use(express.static(path.join(__dirname,'../user/web')));
 app.set('view engine', 'ejs');
 const server = app.listen(PORT, () => httpLog.info(`Listening on ${ PORT }`));
 
@@ -47,10 +47,10 @@ app.get('/', (req, res) => {
     httpLog.info("REQ:" + req.query.view);
     var page = req.query.view;
     if ((page === undefined) || (menu[page] === undefined)) page='default';
-    res.render('pages/index',{active:page, menu:menu, diagram:diagram });
+    res.render('pages/index',{active:page, menu:menu});
 });
 
-// Connect to MySQL
+// Connect to Databa
 const db = require('./modules/'+cfg.dbConnector)(cfg);
 db.connect();
 
