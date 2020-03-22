@@ -11,6 +11,9 @@ wget -q -O - https://raw.githubusercontent.com/AM2H-Development/AM2H-ServerV2/2.
 
 Rename user/cfg/config.sample.js to config.js
 
-Start the apps:
+Start the apps locally (in Theia terminal):
 * node startMqttTimer {cfgname} &
 * node startWebServer {cfgname} &
+
+Start the apps in Docker container:
+* docker run -it -d -v AM2H-ServerV2_data:/home/project:cached --entrypoint node am2h/nodejs-theia:latest ./AM2H-ServerV2/base/startMqttTimer.js
