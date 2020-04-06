@@ -1,6 +1,6 @@
 version: "3.7"
 services:
-  AM2H-Server:
+  AM2H-ServerV2:
     image: "am2h/nodejs-theia:latest"
     logging:
       driver: "json-file"
